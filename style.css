@@ -1,0 +1,110 @@
+
+.wordsearch td{
+    text-align: center;
+    font-size: calc(14px + .7vw);
+    width: 2vw;
+    margin: 0;
+    border-collapse: collapse;
+    display: inline-block;
+    user-select: none;
+}
+
+::selection {
+    background-color: #EEEEEE;
+}
+
+.wordsearch tr {
+    border-collapse: collapse;
+    display: block;
+}
+
+.wordsearch td:hover {
+    cursor: pointer;
+}
+
+.wordsearch {
+    margin: 0 auto;
+    position: absolute;
+    top: 1vh;
+}
+
+#buttons {
+    justify-content: center;
+    margin: 0 auto;
+    width: calc(38px + 61vw);
+    display: block;
+    position: absolute;
+    bottom: 2vh;
+}
+
+button {
+    width: 15vw;
+    border: none;
+    background-color: rgb(203, 203, 203);
+    padding: 3px;
+    font-size: calc(12px + .7vw);
+    margin-top: 20px;
+    margin-left: 0;
+}
+
+button:hover {cursor: pointer;}
+
+#ldmode:hover {cursor: pointer;}
+
+#shadow {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    background-color: #00000099;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 1;
+}
+
+#popups {
+    text-align: center;
+}
+
+.popup {
+    display: none;
+    position: absolute;
+    background-color: #DDDDDD;
+    z-index: 2;
+    margin: 0 auto;
+    width: 40vw;
+    left: 30vw;
+    top: 20vh;
+}
+
+h3 {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+ol {
+    position: relative;
+    right: -5vw;
+    text-align: left;
+    list-style-type: none;
+}
+
+li:hover {
+    cursor: pointer;
+}
+
+.popup button {
+    margin-bottom: 5px;
+}
+
+#displayinfo {
+    position: absolute;
+    bottom: 2vh;
+    width: 90vw;
+}
+
+#displayinfo button, h1 {
+    display: inline-block;
+    margin-right: 10px;
+}
+
