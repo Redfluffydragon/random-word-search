@@ -12,7 +12,7 @@ let table = [];//for letters
 let cells = [];//for cells
 let alltables = [];//for all saved tables
 let cellinfo = [];
-let width = 20; //45 max width for HP
+let width = 45; //45 max width for HP
 let height = 19;
 
 let shown, savedyet = false;
@@ -40,9 +40,9 @@ let shadow = document.getElementById("shadow");
 function drawtable(table, index) {
     wordsearch.innerHTML = "";
     cells.length = 0;
-    for (let i = 0; i < alltables[index].height; i++) {
+    for (let i = 0; i < /* alltables[index]. */height; i++) {
         let row = table.insertRow(0);
-        for(let j = 0; j < alltables[index].width; j++) {
+        for(let j = 0; j < /* alltables[index]. */width; j++) {
             let cell = row.insertCell(0);
             cells.push(cell);
         }
