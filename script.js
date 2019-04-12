@@ -1,11 +1,11 @@
 /**
  * todo:
- * remove previous unsaved item not working - removes item no matter what
  * add delete word search function
- * fix save button so it doesn't open the popup if that one has already been saved
  * save light/dark mode
  */
-// localStorage.removeItem("saved");
+
+// localStorage.clear();
+
 let letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 let tweentable = []; //push to here, then make into one string later
 let table = [];//for letters
@@ -34,6 +34,9 @@ let seesaved = document.getElementById("seesaved");
 let savepopup = document.getElementById("savepopup");
 let givename = document.getElementById("givename");
 let reallysave = document.getElementById("reallysave");
+
+let backbtn = document.getElementById('backbtn');
+let savedName = document.getElementById('savedName');
 
 let shadow = document.getElementById("shadow");
 
@@ -64,7 +67,14 @@ function filltable() {
     localStorage.setItem("saved", JSON.stringify(alltables));
 }
 
-function draw(newTable) {
+function draw(newTable, idx) {
+    let getall = localStorage.getItem("saved");
+    if (getall !== null) {
+        alltables = JSON.parse(getall);
+        console.log(alltables);
+    }
+    let getlen = alltables.length-1;   
+    if (idx === undefined) { idx = getlen; }
     wordsearch.innerHTML = "";
     seesaved.innerHTML = "";
 
@@ -72,22 +82,18 @@ function draw(newTable) {
         alltables[i].number = i+1;
     }
 
-    let getall = localStorage.getItem("saved");
-    if (getall !== null) {
-        alltables = JSON.parse(getall);
-        console.log(alltables);
-    }
-    let getlen = alltables.length-1;
-    drawtable(wordsearch, getlen);
+    drawtable(wordsearch, idx);
 
     if (alltables.length !== 0 && !newTable) {
-        let getwidth = alltables[getlen].width;
-        let getheight = alltables[getlen].height;
+        // let getwidth = alltables[idx].width;
+        // let getheight = alltables[idx].height;
+        let getwidth = width
+        let getheight = height;
 
         for (let i = 0; i < getwidth*getheight; i++) {
-            cells[i].textContent = alltables[getlen].table[i];
-            if (alltables[getlen].highlit[i]) {
-                cells[width*height-i-1].style.backgroundColor = alltables[getlen].highlit[i];
+            cells[i].textContent = alltables[idx].table[i];
+            if (alltables[idx].highlit[i]) {
+                cells[width*height-i-1].style.backgroundColor = alltables[idx].highlit[i];
             }
         }
     }
@@ -245,8 +251,11 @@ saved.addEventListener("click", function() {
     for (let i = 0; i < seebutton.length; i ++) {
         seebutton[i].onclick = function() {
             shown = seebutton[i].textContent.charAt(0);
+            savedName.textContent = 'Saved Search: '+seebutton[i].textContent.slice(3);
             localStorage.setItem("shown", JSON.stringify(shown));
-            let newin = window.open('displaysaved.html', '_blank').focus(); // to open in a new tab
+            draw(false, shown-1);
+            
+            // let newin = window.open('displaysaved.html', '_blank').focus(); // to open in a new tab
             closeAll();
         }
     }
@@ -309,3 +318,7 @@ document.addEventListener("click", (evt) => {
       clicked = false;
     }
   }, false);
+
+backbtn.addEventListener('click', () => {
+    draw(false);
+}, false);

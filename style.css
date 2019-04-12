@@ -29,10 +29,6 @@
 }
 
 #buttons {
-    justify-content: center;
-    margin: 0 auto;
-    width: calc(38px + 61vw);
-    display: block;
     position: absolute;
     bottom: 2vh;
 }
@@ -45,11 +41,14 @@ button {
     font-size: calc(12px + .7vw);
     margin-top: 20px;
     margin-left: 0;
+    cursor: pointer;
 }
 
-button:hover {cursor: pointer;}
-
-#ldmode:hover {cursor: pointer;}
+#ldmode {
+    cursor: pointer;
+    position: relative;
+    top: 11px;
+}
 
 #shadow {
     width: 100vw;
@@ -82,6 +81,11 @@ h3 {
     margin-left: 5px;
 }
 
+h2 {
+    margin: 0;
+    display: inline;
+}
+
 ol {
     position: relative;
     right: -5vw;
@@ -108,3 +112,8 @@ li:hover {
     margin-right: 10px;
 }
 
+#backbtn {
+    position: absolute;
+    bottom: 2vh;
+    right: 2vh;
+}
