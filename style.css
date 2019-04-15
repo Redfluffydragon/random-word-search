@@ -1,12 +1,13 @@
 
 .wordsearch td{
     text-align: center;
-    font-size: calc(14px + .7vw);
+    font-size: calc(10px + 1vw);
     width: 2vw;
     margin: 0;
     border-collapse: collapse;
     display: inline-block;
     user-select: none;
+    cursor: pointer;
 }
 
 ::selection {
@@ -18,19 +19,18 @@
     display: block;
 }
 
-.wordsearch td:hover {
-    cursor: pointer;
-}
-
 .wordsearch {
     margin: 0 auto;
-    position: absolute;
-    top: 1vh;
+    position: relative;
+    top: 5px;
 }
 
-#buttons {
+#bottomLeft {
     position: absolute;
-    bottom: 2vh;
+    bottom: 6px;
+    left: -34px;
+    list-style-type: none;
+    margin: 0;
 }
 
 button {
@@ -98,7 +98,7 @@ li:hover {
 }
 
 .popup button {
-    margin-bottom: 5px;
+    margin: 5px;
 }
 
 #displayinfo {
@@ -114,6 +114,10 @@ li:hover {
 
 #backbtn {
     position: absolute;
-    bottom: 2vh;
-    right: 2vh;
+    bottom: 6px;
+    right: 6px;
+}
+
+.none {
+    display: none;
 }

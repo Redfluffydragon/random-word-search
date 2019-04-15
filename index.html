@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>RWS</title>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Random Word Search</title>
         <link rel="icon" href="rwsicon1.png" type="image/png">
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style.css" async>
         <script src="script.js" async></script>
     </head>
     <body>
@@ -15,20 +18,24 @@
             </div>
 
             <div id="savepopup" class="popup">
-                <h3>Save</h3>
-                <label>Name: </label><input id="givename">
+                <h3>Save current word search</h3>
+                <label>Name: <input id="givename"></label>
                 <button id="reallysave">Save</button>
             </div>
         </div>
         <table id="wordsearch" class="wordsearch"></table>
-        <div id="buttons">
-            <button id="newtable">New</button>
-            <button id="savetable">Save</button>
-            <button id="saved">Saved searches</button>
-            <button id="deleteall">Delete all</button>
-            <img src="ldmode.png" id="ldmode" style="width: 35px; height: 35px;">
-            <h2 id="savedName"></h2>
-        </div>
-        <button id="backbtn">Back</button>
+        <ul id="bottomLeft">
+            <li><h2 id="savedName"></h2></li>
+            <li>
+                <div id="buttons">
+                    <button id="newtable">New</button>
+                    <button id="savetable">Save</button>
+                    <button id="saved">View Saved</button>
+                    <button id="deleteall">Delete all</button>
+                    <img src="ldmode.png" id="ldmode" style="width: 35px; height: 35px;">
+                </div>
+            </li>
+        </ul>
+        <button id="backbtn" class="none">Back</button>
     </body>
 </html>
