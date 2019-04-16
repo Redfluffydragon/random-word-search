@@ -10,11 +10,13 @@
         <script src="script.js" async></script>
     </head>
     <body>
+        <div id="everything">
+        <table id="wordsearch" class="wordsearch"></table>
         <div id="shadow"></div>
         <div id="popups">
             <div id="savedpopup" class="popup">
                 <h3>Saved word searches</h3>
-                <ol id="seesaved"></ol>
+                <table id="savedTables"></table>
             </div>
 
             <div id="savepopup" class="popup">
@@ -23,7 +25,7 @@
                 <button id="reallysave">Save</button>
             </div>
         </div>
-        <table id="wordsearch" class="wordsearch"></table>
+        
         <ul id="bottomLeft">
             <li><h2 id="savedName"></h2></li>
             <li>
@@ -37,5 +39,6 @@
             </li>
         </ul>
         <button id="backbtn" class="none">Back</button>
+        </div>
     </body>
 </html>

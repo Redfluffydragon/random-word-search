@@ -1,10 +1,8 @@
-/**
- * todo:
- * add delete single word search function
- * save light/dark mode
+/** todo:
  * adjust width & height automatically? or by user input?
  */
 
+// localStorage.clear();
 let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 let tweentable = []; //push to here, then make into one string later
 let table = [];//for letters
@@ -32,7 +30,7 @@ let saved = document.getElementById('saved');
 let deleteall = document.getElementById('deleteall');
 let savedpopup = document.getElementById('savedpopup');
 let popups = document.getElementById('popups');
-let seesaved = document.getElementById('seesaved');
+let savedTables = document.getElementById('savedTables');
 
 let savepopup = document.getElementById('savepopup');
 let givename = document.getElementById('givename');
@@ -42,6 +40,8 @@ let backbtn = document.getElementById('backbtn');
 let savedName = document.getElementById('savedName');
 
 let shadow = document.getElementById('shadow');
+
+let everything = document.getElementById('everything');
 
 let isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
@@ -89,25 +89,25 @@ alltables = gotchem('saved', []);
 shown = gotchem('shown', null, sessionStorage);
 tableName = gotchem('tableName', null, sessionStorage);
 savedyet = gotchem('savedyet', false);
+lightmode = gotchem('mode', true);
 
 function draw(newTable=false, idx=alltables.length-1) {
-    if (shown !== alltables.length-1 && shown !== null) {
+    switchMode(true);
+    localStorage.setItem('saved', JSON.stringify(alltables));
+    if (shown < alltables.length-1 && shown !== null) {
         ifSaved();
         idx = shown;
     }
     wordsearch.innerHTML = '';
-    seesaved.innerHTML = '';
+    savedTables.innerHTML = '';
 
     for (let i = 0; i < alltables.length; i++) {
         alltables[i].number = i+1;
     }
-
     drawtable(wordsearch, idx);
 
     if (alltables.length !== 0 && !newTable) {
-        // let getwidth = alltables[idx].width;
-        // let getheight = alltables[idx].height;
-        let getwidth = width
+        let getwidth = width;
         let getheight = height;
 
         for (let i = 0; i < getwidth*getheight; i++) {
@@ -126,6 +126,10 @@ function draw(newTable=false, idx=alltables.length-1) {
     if (savedyet) {
         savetable.textContent = 'Saved!';
         savetable.disabled = true;
+    }
+    else {
+        savetable.textContent = 'Save';
+        savetable.disabled = false;
     }
 }
 
@@ -172,6 +176,7 @@ function allclicks(table=alltables.length-1) {
     }
     wordsearch.addEventListener('mouseup', () => {
         downmouse = false;
+        localStorage.setItem('saved', JSON.stringify(alltables));
     }, false);
 }
 
@@ -183,6 +188,11 @@ window.addEventListener('beforeunload', () => {
 newtable.addEventListener('click', function() {
     savetable.textContent = 'Save';
     savetable.disabled = false;
+    backbtn.classList.add('none');
+    savedName.textContent = '';
+    document.title = 'Random Word Search';
+    shown = null;
+    sessionStorage.setItem('shown', JSON.stringify(shown));
     if (!savedyet) {
         alltables.splice(alltables.length-1, 1); //remove the previous one if it wasn't saved
         savedyet = false;
@@ -231,26 +241,46 @@ saved.addEventListener('click', function() {
     }
     savedpopup.style.display = 'inline-block';
     shadow.style.display = 'initial';
-    seesaved.innerHTML = '';
-    for (let i = 0; i < alltables.length; i++) {
+    savedTables.innerHTML = '';
+    for (let i = alltables.length-1; i > -1; i--) {//minus so they end up in the right order
         if (alltables[i].name !== '') {
-            let liel = document.createElement('li');
             let showname = document.createTextNode(alltables[i].number + '. ' + alltables[i].name);
-            liel.appendChild(showname);
-            seesaved.appendChild(liel);
+            let row = savedTables.insertRow(0);
+            let cell0 = row.insertCell(0);
+            let cell1 = row.insertCell(1);
+            let dltbtn = document.createElement('button');
+            let dlttxt = document.createTextNode('Delete');
+            dltbtn.appendChild(dlttxt);
+            dltbtn.className = 'dltbtns';
+            cell0.className = 'goandsee';
+            cell1.appendChild(dltbtn);
+            cell0.appendChild(showname);
         }
     }
-    let seebutton = seesaved.getElementsByTagName('li');
-    for (let i = 0; i < seebutton.length; i ++) {
-        seebutton[i].onclick = () => {
-            tableName = seebutton[i].textContent.slice(3);
+    let seeCell = savedTables.getElementsByClassName('goandsee');
+    let buttons = savedTables.getElementsByClassName('dltbtns');
+    for (let i = 0; i < seeCell.length; i ++) {
+        seeCell[i].addEventListener('click', () => {
+            tableName = seeCell[i].textContent.slice(3);
             sessionStorage.setItem('tableName', JSON.stringify(tableName));
             ifSaved();
-            shown = seebutton[i].textContent.charAt(0) - 1;
+            shown = seeCell[i].textContent.charAt(0) - 1;
             sessionStorage.setItem('shown', JSON.stringify(shown));
             draw(false, shown);
             closeAll();
-        }
+        }, false);
+        buttons[i].addEventListener('click', e => {
+            let confDelete = confirm('Delete your saved word search '+tableName+'?');
+            if (confDelete) {
+                alltables.splice(shown, 1);
+                localStorage.setItem('saved', JSON.stringify(alltables));
+                savedyet = false;
+                localStorage.setItem('savedyet', JSON.stringify(savedyet));
+                savetable.textContent = 'Save';
+                savetable.disabled = false;
+                draw(true);
+            }
+        }, false);
     }
     clicked = true;
 }, false);
@@ -264,6 +294,11 @@ deleteall.addEventListener('click', function() {
         draw();
         savedyet = false;
         localStorage.setItem('savedyet', JSON.stringify(savedyet));
+        backbtn.classList.add('none');
+        savedName.textContent = '';
+        document.title = 'Random Word Search';
+        shown = null;
+        sessionStorage.setItem('shown', JSON.stringify(shown));
     }
 }, false);
 
@@ -279,28 +314,26 @@ function closeAll() {
     shadow.style.display = 'none';
 };
 
-//light/dark mode
-ldmode.addEventListener('click', function()  {
-    let head = document.getElementsByTagName('head')[0];
-    let style = document.createElement('style');
-    style.type = 'text/css';
-    if (!lightmode) {
+function switchMode(start=false) {
+    if (lightmode === start) {
         document.body.style.backgroundColor = 'white';
         wordsearch.style.color = 'black';
         shadow.style.backgroundColor = '';
-        css = 'html {-webkit-filter: invert(0%); -moz-filter: invert(0%); -o-filter: invert(0%); -ms-filter: invert(0%); }'
-        lightmode = true;
+        everything.classList.remove('invert');
     }
-    else if (lightmode) {
+    else if (lightmode !== start) {
         document.body.style.backgroundColor = 'black';
         wordsearch.style.color = 'gray';
         shadow.style.backgroundColor = '#FFFFFF99';
-        css = 'html {-webkit-filter: invert(100%);' + '-moz-filter: invert(100%);' + '-o-filter: invert(100%);' + '-ms-filter: invert(100%); }';
-        lightmode = false;
+        everything.classList.add('invert');
     }
-    style.styleSheet ? style.styleSheet.cssText = css : style.appendChild(document.createTextNode(css));
-    
-    head.appendChild(style);
+}
+
+//light/dark mode
+ldmode.addEventListener('click', function()  {
+    switchMode();
+    lightmode = lightmode ? false : true;
+    localStorage.setItem('mode', JSON.stringify(lightmode));
 }, false);
 
 //close modals on click outside
@@ -323,3 +356,5 @@ backbtn.addEventListener('click', () => {
     sessionStorage.setItem('shown', JSON.stringify(shown));
     draw();
 }, false);
+
+document.addEventListener('click', e => {console.log(e.target);}, false);
