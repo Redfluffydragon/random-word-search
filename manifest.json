@@ -1,0 +1,16 @@
+{
+  "name": "Random Word Search",
+  "description": "A completely random word search. (Or at least as random as JavaScript can make it)",
+  "version": "1.0",
+  "manifest_version": 2,
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "icons": {
+    "16": "rwsicon1.png", "64": "rwsicon1.png"
+  }
+}
