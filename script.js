@@ -36,8 +36,11 @@ let savepopup = document.getElementById('savepopup');
 let givename = document.getElementById('givename');
 let reallysave = document.getElementById('reallysave');
 
+let saveAlert = document.getElementById('saveAlert'); 
+
 let backbtn = document.getElementById('backbtn');
 let savedName = document.getElementById('savedName');
+let seeName = document.getElementById('seeName');
 
 let shadow = document.getElementById('shadow');
 
@@ -74,8 +77,25 @@ function filltable() {
 
 function ifSaved() {
     backbtn.classList.remove('none');
+    newtable.classList.add('none');
     document.title = 'RWS - ' + tableName;
-    savedName.textContent = 'Saved Search: ' + tableName;
+    savedName.value = tableName;
+    seeName.classList.remove('none');
+    savetable.classList.add('none');
+}
+
+function changeName() {
+    if (shown !== null) {
+        let getName = savedName.value;
+        alltables[shown].name = getName;
+        localStorage.setItem('all', JSON.stringify(alltables));
+        saveAlert.classList.add('inlineBlock');
+        shadow.style.display = 'initial';
+        window.setTimeout(() => {
+            saveAlert.classList.remove('inlineBlock');
+            shadow.style.display = '';
+        }, 500);
+    }
 }
 
 function gotchem(item, defalt, type=localStorage) {
@@ -117,7 +137,7 @@ function draw(newTable=false, idx=alltables.length-1) {
             }
         }
     }
-    else { filltable(); }
+    else { filltable(); idx = alltables.length-1; }
 
     allclicks(idx);
 
@@ -186,23 +206,24 @@ window.addEventListener('beforeunload', () => {
 
 //make a new table
 newtable.addEventListener('click', function() {
-    savetable.textContent = 'Save';
-    savetable.disabled = false;
-    backbtn.classList.add('none');
-    savedName.textContent = '';
-    document.title = 'Random Word Search';
-    shown = null;
-    sessionStorage.setItem('shown', JSON.stringify(shown));
+    let confNew;
     if (!savedyet) {
-        alltables.splice(alltables.length-1, 1); //remove the previous one if it wasn't saved
-        savedyet = false;
+        confNew = confirm('Make a new table without saving?');
     }
-    else if (savedyet) {
-        savedyet = false;
+    else if (confNew || savedyet) {
+        savetable.textContent = 'Save';
+        savetable.disabled = false;
+        backbtn.classList.add('none');
+        savedName.textContent = '';
+        document.title = 'Random Word Search';
+        shown = null;
+        sessionStorage.setItem('shown', JSON.stringify(shown));
+
+        savedyet ? savedyet = false : alltables.splice(alltables.length-1, 1);
+        localStorage.setItem('savedyet', savedyet);
+        localStorage.setItem('saved', JSON.stringify(alltables));
+        draw(true);
     }
-    localStorage.setItem('savedyet', savedyet);
-    localStorage.setItem('saved', JSON.stringify(alltables));
-    draw(true);
 }, false);
 
 function saveTheTable() {
@@ -261,6 +282,7 @@ saved.addEventListener('click', function() {
     let buttons = savedTables.getElementsByClassName('dltbtns');
     for (let i = 0; i < seeCell.length; i ++) {
         seeCell[i].addEventListener('click', () => {
+            changeName();
             tableName = seeCell[i].textContent.slice(3);
             sessionStorage.setItem('tableName', JSON.stringify(tableName));
             ifSaved();
@@ -349,12 +371,13 @@ document.addEventListener('click', (evt) => {
 
 //go back to main search from saved one
 backbtn.addEventListener('click', () => {
+    changeName();
     backbtn.classList.add('none');
-    savedName.textContent = '';
+    newtable.classList.remove('none');
+    seeName.classList.add('none');
+    savetable.classList.remove('none');
     document.title = 'Random Word Search';
     shown = null;
     sessionStorage.setItem('shown', JSON.stringify(shown));
     draw();
 }, false);
-
-document.addEventListener('click', e => {console.log(e.target);}, false);

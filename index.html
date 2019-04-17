@@ -24,13 +24,17 @@
                 <label>Name: <input id="givename"></label>
                 <button id="reallysave">Save</button>
             </div>
+            <div id="saveAlert" class="popup">
+                <h2>Saved!</h2>
+            </div>
         </div>
         
         <ul id="bottomLeft">
-            <li><h2 id="savedName"></h2></li>
+            <li><h2 id="seeName" class="none">Saved Search: <input id="savedName"></h2></li>
             <li>
                 <div id="buttons">
                     <button id="newtable">New</button>
+                    <button id="backbtn" class="none"> &larr; Back</button>
                     <button id="savetable">Save</button>
                     <button id="saved">View Saved</button>
                     <button id="deleteall">Delete all</button>
@@ -38,7 +42,6 @@
                 </div>
             </li>
         </ul>
-        <button id="backbtn" class="none">Back</button>
         </div>
     </body>
 </html>
