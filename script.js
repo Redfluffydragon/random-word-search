@@ -79,7 +79,7 @@ function ifSaved() {
     backbtn.classList.remove('none');
     newtable.classList.add('none');
     document.title = 'RWS - ' + tableName;
-    savedName.value = tableName;
+    savedName.value = alltables[shown].name;
     seeName.classList.remove('none');
     savetable.classList.add('none');
 }
@@ -292,7 +292,7 @@ saved.addEventListener('click', function() {
             closeAll();
         }, false);
         buttons[i].addEventListener('click', e => {
-            let confDelete = confirm('Delete your saved word search '+tableName+'?');
+            let confDelete = confirm('Delete your saved word search "'+tableName+'"?');
             if (confDelete) {
                 alltables.splice(shown, 1);
                 localStorage.setItem('saved', JSON.stringify(alltables));

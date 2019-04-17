@@ -22,6 +22,7 @@
     margin: 0 auto;
     position: relative;
     top: 5px;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 #bottomLeft {
@@ -126,15 +127,11 @@ li:hover {
     cursor: pointer;
 }
 
-.dltbtns {
-    padding: 5px;
-    width: 6vw;
-    font-size: calc(7px + .7vw);
+#savedTables {
+    border-collapse: collapse;
 }
 
-#savedTables {
-    margin: 0 auto;
-}
+#savedTables tr:nth-child(even) {background-color: rgb(140, 140, 140);}
 
 .invert {
     filter: invert(100%);
@@ -156,4 +153,10 @@ li:hover {
 
 .inlineBlock {
     display: inline-block;
+}
+
+.dltbtns {
+    width: 1vw;
+    font-size: calc(7px + .7vw);
+    background-color: transparent;
 }
