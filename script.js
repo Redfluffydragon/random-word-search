@@ -3,50 +3,45 @@
  */
 
 // localStorage.clear();
-let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 let tweentable = []; //push to here, then make into one string later
 let table = [];//for letters
 let cells = [];//for cells
-let alltables = [];//for all saved tables
 let cellinfo = []; //highlighted or not
 let width = 45; //45 max width for HP
 let height = 19;
 
-let shown;
-let savedyet = false;
-let tableName;
+let cTable; //current table
 
-let clicked;
-let savepop;
+let savepop; //modals open or closed
 let savedpop;
 
-let lightmode = true;
-let ldmode = document.getElementById('ldmode');
+const ldmode = document.getElementById('ldmode');
 
-let wordsearch = document.getElementById('wordsearch');
-let newtable = document.getElementById('newtable');
-let savetable = document.getElementById('savetable');
-let saved = document.getElementById('saved');
-let deleteall = document.getElementById('deleteall');
-let savedpopup = document.getElementById('savedpopup');
-let popups = document.getElementById('popups');
-let savedTables = document.getElementById('savedTables');
+const wordsearch = document.getElementById('wordsearch');
+const newtable = document.getElementById('newtable');
+const savetable = document.getElementById('savetable');
+const saved = document.getElementById('saved');
+const deleteall = document.getElementById('deleteall');
+const savedpopup = document.getElementById('savedpopup');
+const popups = document.getElementById('popups');
+const savedTables = document.getElementById('savedTables');
 
-let savepopup = document.getElementById('savepopup');
-let givename = document.getElementById('givename');
-let reallysave = document.getElementById('reallysave');
+const savepopup = document.getElementById('savepopup');
+const givename = document.getElementById('givename');
+const reallysave = document.getElementById('reallysave');
 
-let saveAlert = document.getElementById('saveAlert'); 
+const saveAlert = document.getElementById('saveAlert'); 
 
-let backbtn = document.getElementById('backbtn');
-let savedName = document.getElementById('savedName');
-let seeName = document.getElementById('seeName');
+const backbtn = document.getElementById('backbtn');
+const savedName = document.getElementById('savedName');
+const seeName = document.getElementById('seeName');
 
-let shadow = document.getElementById('shadow');
+const shadow = document.getElementById('shadow');
 
-let everything = document.getElementById('everything');
+const everything = document.getElementById('everything');
 
-let isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
+const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
 function drawtable(table, index) {
     wordsearch.innerHTML = '';
@@ -75,16 +70,16 @@ function filltable() {
     localStorage.setItem('saved', JSON.stringify(alltables));
 }
 
-function ifSaved() {
-    backbtn.classList.remove('none');
-    newtable.classList.add('none');
-    document.title = 'RWS - ' + tableName;
-    savedName.value = alltables[shown].name;
-    seeName.classList.remove('none');
-    savetable.classList.add('none');
+function ifSaved() { //If viewing saved table
+    backbtn.classList.remove('none'); //show the back button
+    newtable.classList.add('none'); //hide the new table button
+    document.title = 'RWS - ' + tableName; //change the title
+    savedName.value = alltables[shown].name; //put the name of the saved table
+    seeName.classList.remove('none'); //show the name
+    savetable.classList.add('none'); //hide the save button
 }
 
-function changeName() {
+function changeName() { //change the name of a saved table
     if (shown !== null) {
         let getName = savedName.value;
         alltables[shown].name = getName;
@@ -94,22 +89,20 @@ function changeName() {
         window.setTimeout(() => {
             saveAlert.classList.remove('inlineBlock');
             shadow.style.display = '';
-        }, 500);
+        }, 400);
     }
 }
 
 function gotchem(item, defalt, type=localStorage) {
     let getem = type.getItem(item);
-    if (getem !== null && JSON.parse(getem) !== undefined) {
-        return JSON.parse(getem);
-    }
-    else { return defalt; }
+    if (getem !== null && JSON.parse(getem) !== undefined) return JSON.parse(getem);
+    return defalt; 
 }
-alltables = gotchem('saved', []);
-shown = gotchem('shown', null, sessionStorage);
-tableName = gotchem('tableName', null, sessionStorage);
-savedyet = gotchem('savedyet', false);
-lightmode = gotchem('mode', true);
+let alltables = gotchem('saved', []); //all the saved tables
+let shown = gotchem('shown', null, sessionStorage); //showing a saved table or not
+let tableName = gotchem('tableName', null, sessionStorage); //table name for shown
+let savedyet = gotchem('savedyet', false); //newest table saved yet or not
+let lightmode = gotchem('mode', true); //light or dark mode
 
 function draw(newTable=false, idx=alltables.length-1) {
     switchMode(true);
@@ -139,7 +132,7 @@ function draw(newTable=false, idx=alltables.length-1) {
     }
     else { filltable(); idx = alltables.length-1; }
 
-    allclicks(idx);
+    cTable = idx;
 
     localStorage.setItem('saved', JSON.stringify(alltables));
 
@@ -156,49 +149,44 @@ function draw(newTable=false, idx=alltables.length-1) {
 draw();
 
 //clicks on each letter - now with colors!
-function allclicks(table=alltables.length-1) {
-    let downmouse, highlighting, getcolor;
-    let makolor = [];
-    let cellID = wordsearch.getElementsByTagName('td');
-    let len = table;
-    for (let i = 0; i < cellID.length; i++) {
-        cellID[i].addEventListener('mousedown', () => {
-            makolor.length = 0;
-            for (let i = 0; i < 3; i++) {
-                let randomcolor = Math.round(Math.random()*255);
-                makolor.push(randomcolor);
-            }
-            getcolor = 'rgba(' + makolor.join() + ', 0.5)';
-            if (alltables[len].highlit[i] !== getcolor) {highlighting = true;}
-            if (alltables[len].highlit[i]) {highlighting = false};
-            downmouse = true;
-            if (!alltables[len].highlit[i]) {
-                alltables[len].highlit[i] = getcolor;
-                cellID[i].style.backgroundColor = getcolor;
-            }
-            else if (alltables[len].highlit[i]) {
-                alltables[len].highlit[i] = false;
-                cellID[i].style.backgroundColor = 'transparent';
-            }
-        }, false);
-        cellID[i].addEventListener('mousemove', () => {
-            if (downmouse) {
-                if (alltables[len].highlit[i] !== getcolor && highlighting) {
-                    alltables[len].highlit[i] = getcolor;
-                    cellID[i].style.backgroundColor = getcolor;
-                }
-                else if (alltables[len].highlit[i] !== getcolor && !highlighting) {
-                    alltables[len].highlit[i] = false;
-                    cellID[i].style.backgroundColor = 'transparent';
-                }
-            }
-        }, false);
+let cellnum, highlighting, getcolor;
+let cellID = wordsearch.getElementsByTagName('td');
+function whileDragging(e) {
+    let cellnum = e.target.cellIndex + (e.target.closest('tr').rowIndex*width);
+    if (alltables[cTable].highlit[cellnum] !== getcolor && highlighting) {
+        alltables[cTable].highlit[cellnum] = getcolor;
+        cellID[cellnum].style.backgroundColor = getcolor;
     }
-    wordsearch.addEventListener('mouseup', () => {
-        downmouse = false;
-        localStorage.setItem('saved', JSON.stringify(alltables));
-    }, false);
+    else if (alltables[cTable].highlit[cellnum] !== getcolor && !highlighting) {
+        alltables[cTable].highlit[cellnum] = false;
+        cellID[cellnum].style.backgroundColor = 'transparent';
+    }
 }
+wordsearch.addEventListener('mousedown', e => {
+    let cellnum = e.target.cellIndex + (e.target.closest('tr').rowIndex*width);
+    let makolor = [];
+    makolor.length = 0;
+    for (let i = 0; i < 3; i++) {
+        let randomcolor = Math.round(Math.random()*255);
+        makolor.push(randomcolor);
+    }
+    getcolor = 'rgba(' + makolor.join() + ', 0.5)';
+    if (alltables[cTable].highlit[cellnum] !== getcolor) {highlighting = true;}
+    if (alltables[cTable].highlit[cellnum]) {highlighting = false};
+    if (!alltables[cTable].highlit[cellnum]) {
+        alltables[cTable].highlit[cellnum] = getcolor;
+        cellID[cellnum].style.backgroundColor = getcolor;
+    }
+    else if (alltables[cTable].highlit[cellnum]) {
+        alltables[cTable].highlit[cellnum] = false;
+        cellID[cellnum].style.backgroundColor = 'transparent';
+    }
+    wordsearch.addEventListener('mousemove', whileDragging, false);
+}, false);
+wordsearch.addEventListener('mouseup', e => {
+    wordsearch.removeEventListener('mousemove', whileDragging, false);
+    localStorage.setItem('saved', JSON.stringify(alltables));
+}, false);
 
 window.addEventListener('beforeunload', () => {
     localStorage.setItem('saved', JSON.stringify(alltables));
@@ -210,7 +198,7 @@ newtable.addEventListener('click', function() {
     if (!savedyet) {
         confNew = confirm('Make a new table without saving?');
     }
-    else if (confNew || savedyet) {
+    if (confNew || savedyet) {
         savetable.textContent = 'Save';
         savetable.disabled = false;
         backbtn.classList.add('none');
@@ -233,6 +221,7 @@ function saveTheTable() {
         closeAll();
         savedyet = true;
         localStorage.setItem('savedyet', JSON.stringify(savedyet));
+        givename.value = '';
     }
     savetable.textContent = 'Saved!';
     savetable.disabled = true;
@@ -240,12 +229,10 @@ function saveTheTable() {
 
 //open the save table popup
 savetable.addEventListener('click', function() {
-    if (!savedyet) {
-        savepopup.style.display = 'inline-block';
-        shadow.style.display = 'initial';
-        givename.focus();
-    }
-    clicked = true;
+    savepopup.style.display = 'inline-block';
+    shadow.style.display = 'initial';
+    givename.focus();
+    savepop = true;
 }, false);
 
 //actually save the table
@@ -278,33 +265,36 @@ saved.addEventListener('click', function() {
             cell0.appendChild(showname);
         }
     }
-    let seeCell = savedTables.getElementsByClassName('goandsee');
-    let buttons = savedTables.getElementsByClassName('dltbtns');
-    for (let i = 0; i < seeCell.length; i ++) {
-        seeCell[i].addEventListener('click', () => {
-            changeName();
-            tableName = seeCell[i].textContent.slice(3);
-            sessionStorage.setItem('tableName', JSON.stringify(tableName));
-            ifSaved();
-            shown = seeCell[i].textContent.charAt(0) - 1;
-            sessionStorage.setItem('shown', JSON.stringify(shown));
-            draw(false, shown);
-            closeAll();
-        }, false);
-        buttons[i].addEventListener('click', e => {
-            let confDelete = confirm('Delete your saved word search "'+tableName+'"?');
-            if (confDelete) {
-                alltables.splice(shown, 1);
-                localStorage.setItem('saved', JSON.stringify(alltables));
-                savedyet = false;
+    savedpop = true;
+}, false);
+
+savedTables.addEventListener('click', e => {
+    console.log(e.target.closest('tr').rowIndex);
+    if (e.target.matches('.goandsee')) {
+        changeName(); //in case the name was changed?
+        tableName = e.target.textContent.slice(3); //get just the name
+        sessionStorage.setItem('tableName', JSON.stringify(tableName)); // save which table the user is viewing
+        shown = e.target.textContent.charAt(0) - 1; //get the number of the table 
+        sessionStorage.setItem('shown', JSON.stringify(shown)); //save the number of the table
+        ifSaved(); //change buttons for 
+        draw(false, shown); //draw the new table
+        closeAll(); //close the modal
+    }
+    else if (e.target.matches('.dltbtns')) {
+        let confDelete = confirm(`Delete your saved word search "${tableName}"?`);
+        if (confDelete) {
+            alltables.splice(e.target.closest('tr').rowIndex, 1); //remove the right table
+            localStorage.setItem('saved', JSON.stringify(alltables)); //save that
+            if (alltables.length === 0) {
+                savedyet = false; 
                 localStorage.setItem('savedyet', JSON.stringify(savedyet));
                 savetable.textContent = 'Save';
                 savetable.disabled = false;
-                draw(true);
             }
-        }, false);
+            closeAll();
+            draw(true);
+        }
     }
-    clicked = true;
 }, false);
 
 //delete all tables
@@ -324,10 +314,9 @@ deleteall.addEventListener('click', function() {
     }
 }, false);
 
-//close popups
 document.addEventListener('keydown', function(e) {
     if (e.keyCode === 27) { closeAll(); }
-    if (e.keyCode === 13) { saveTheTable(); }
+    if (e.keyCode === 13 && savepop) { saveTheTable(); }
 }, false);
 
 function closeAll() {
@@ -359,19 +348,14 @@ ldmode.addEventListener('click', function()  {
 }, false);
 
 //close modals on click outside
-document.addEventListener('click', (evt) => { 
+document.addEventListener('mousedown', (evt) => { 
     if(evt.target.closest('.popup')) return;
-    if ((savepop || savedpop) && !clicked) { closeAll(); }
-    else if (clicked) {
-      savepop = true;
-      savedpop = true;
-      clicked = false;
-    }
+    if (savepop || savedpop) { closeAll(); }
 }, false);
 
 //go back to main search from saved one
 backbtn.addEventListener('click', () => {
-    changeName();
+    changeName(); //in case name was changed
     backbtn.classList.add('none');
     newtable.classList.remove('none');
     seeName.classList.add('none');
