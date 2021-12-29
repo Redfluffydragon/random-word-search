@@ -46,7 +46,7 @@ ul, dl {
 
 .wordsearch td {
     text-align: center;
-    font-size: calc(10px + 1vw);
+    font-size: 1.5em;
     width: 2vw;
     margin: 0;
     border-collapse: collapse;
@@ -81,7 +81,7 @@ ul, dl {
 button {
     border: none;
     padding: 1ch 2ch;
-    font-size: calc(12px + .7vw);
+    font-size: 1.3em;
     cursor: pointer;
     color: var(--color);
     background: var(--button-bg);
@@ -135,7 +135,6 @@ button:disabled {
     border-radius: 50%;
     border: 3px solid var(--color);
     font-family: monospace;
-    transform: scale(0.85);
 }
 
 #shadow {
@@ -203,7 +202,7 @@ ol {
 }
 
 #savedName {
-    font-size: calc(12px + .7vw);
+    font-size: 1.2em;
     border-radius: 3px;
     border: .5px solid lightgray;
     padding: 2px;
@@ -285,7 +284,7 @@ ol {
 
 .dltbtns {
     min-width: 80px;
-    font-size: calc(7px + .7vw);
+    font-size: 1em;
 }
 
 .openShadow {
