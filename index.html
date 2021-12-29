@@ -24,11 +24,11 @@
 
     <div id="savepopup" class="popup none">
       <h3>Save current word search</h3>
+      <label for="givename">Name: <input id="givename"></label>
       <div>
-        <label for="givename">Name: <input id="givename"></label>
-        <button id="reallysave" class="defaultBtn">Save</button>
+        <button id="reallysave" class="blueBtn">Save</button>
+        <button class="closeBtn">Cancel</button>
       </div>
-      <button class="closeBtn">Close</button>
     </div>
 
     <div id="saveAlert" class="popup none">
@@ -58,8 +58,25 @@
       </div>
       <p>
         View the source code on
-        <a href="https://github.com/Redfluffydragon/random-word-search/tree/master">GitHub</a>!
+        <a href="https://github.com/Redfluffydragon/random-word-search">GitHub</a>!
       </p>
+      <button class="closeBtn">Close</button>
+    </div>
+
+    <div id="newWordsearchModal" class="popup none">
+      <h2>Make a new word search!</h2>
+      <label for="charSetSelect">
+        Select a character set to use:
+      </label>
+      <select name="" id="charSetSelect">
+        <option value="modernEnglish" selected>Modern English (default)</option>
+        <option value="minExtended">Slightly extended</option>
+        <option value="maxExtended">Very extended</option>
+      </select>
+      <div>
+        <button id="createNewWordSearchBtn" class="defaultBtn">Create</button>
+        <button class="closeBtn">Cancel</button>
+      </div>
     </div>
   </div>
 

@@ -16,12 +16,9 @@ function changeName() {
       allTables[shown].name = getName;
     }
     localStorage.setItem('all', JSON.stringify(allTables));
-    saveAlert.classList.remove('none');
-    shadow.classList.add('openShadow');
-    window.setTimeout(() => {
-      saveAlert.classList.add('none');
-      shadow.classList.remove('openShadow');
-    }, 400);
+
+    showModal(saveAlert);
+    window.setTimeout(closeAll, 400);
   }
 }
 
@@ -38,11 +35,21 @@ function gotchem(item, defalt, type = localStorage) {
   return defalt;
 }
 
+function showModal(modal) {
+  if (typeof modal === 'string') {
+    modal = document.getElementById(modal);
+  }
+  modal.classList.remove('none');
+  shadow.classList.add('openShadow');
+}
+
 /** Close all modals */
 function closeAll() {
   savedpopup.classList.add('none');
   savepopup.classList.add('none');
   infoModal.classList.add('none');
+  saveAlert.classList.add('none');
+  document.getElementById('newWordsearchModal').classList.add('none');
   shadow.classList.remove('openShadow');
 };
 
@@ -179,7 +186,7 @@ function fillTable() {
   const cellInfo = [];
 
   for (let i = 0; i < width * height; i++) {
-    tweenTable.push(letters[Math.floor(Math.random() * letters.length)]);
+    tweenTable.push(useLetters[Math.floor(Math.random() * useLetters.length)]);
     cellInfo.push(0);
   }
   const table = tweenTable.join('');
@@ -190,11 +197,43 @@ function fillTable() {
   localStorage.setItem('savedTables', JSON.stringify(allTables));
 }
 
+function createNewTable(charSet) {
+  let confNew;
+  if (!savedyet) {
+    confNew = confirm('Make a new table without saving?');
+  }
+  if (confNew || savedyet) {
+    saveTable.textContent = 'Save';
+    saveTable.disabled = false;
+    backbtn.classList.add('none');
+    savedName.textContent = '';
+    document.title = 'Random Word Search';
+    shown = null;
+    sessionStorage.setItem('shown', JSON.stringify(shown));
+
+    if (savedyet) {
+      savedyet = false;
+    }
+    else {
+      // Remove last table
+      allTables.splice(allTables.length - 1, 1);
+    }
+
+    localStorage.setItem('savedyet', savedyet);
+    localStorage.setItem('savedTables', JSON.stringify(allTables));
+
+    // Set the charset
+    useLetters = charSetMap[charSet];
+    draw(true);
+    closeAll();
+  }
+}
+
 /**
  * Generate a random RGB color
  * @returns {Array} An array with three random integers from 0-255 (inclusive)
  */
- function randomColor() {
+function randomColor() {
   const newColor = [];
   for (let i = 0; i < 3; i++) {
     newColor.push(Math.floor(Math.random() * 256));

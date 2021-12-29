@@ -3,10 +3,21 @@
  * get it to work with touch
  * add default name when saving: "Saved word search #1"?
  * cTable isn't always correct
+ * Add more characters?
  */
 
 // localStorage.clear();
-const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const MIN_LETTER_EXTENSION = 'ÉÜÍÖŒØÄÆÇÑÞÐ';
+const MID_LETTER_EXTENSION = 'ÉŸÜÚÏÍÖÓŒØÁÄÆŚŁÇĆÑÞÐʃ';
+const MAX_LETTER_EXTENSION = 'ÈÉÊËĒĖĘŸÛÜÙÚŪÎÏÍĪĮÌÔÖÒÓŒØŌÕÀÁÂÄÆÃÅĀSSŚŠŁŽŹŻÇĆČÑŃÞÐʃȜǷ';
+const charSetMap = {
+  modernEnglish: LETTERS,
+  minExtended: LETTERS + LETTERS + MIN_LETTER_EXTENSION,
+  maxExtended: LETTERS + LETTERS + MAX_LETTER_EXTENSION,
+}
+let useLetters = LETTERS;
+
 let cells = []; // for cells
 let width = 45; // 45 max width for HP
 let height = 19;
@@ -55,7 +66,9 @@ let savedyet;
 let lightmode;
 
 // For clicks on each letter - now with colors!
-let copyCellColor, highlighting, newHighlightColor;
+let copyCellColor; // For copying cells by color and highlighting in a chosen color
+let highlighting; // Highlighting or erasing
+let newHighlightColor; // The color for highlighting
 
 // Get things from storage and add event listeners
 window.addEventListener('load', () => {
@@ -120,39 +133,24 @@ window.addEventListener('beforeunload', () => {
   localStorage.setItem('savedTables', JSON.stringify(allTables));
 }, false);
 
-// Make a new table
+// Open the new word search modal
 newTable.addEventListener('click', () => {
-  let confNew;
-  if (!savedyet) {
-    confNew = confirm('Make a new table without saving?');
-  }
-  if (confNew || savedyet) {
-    saveTable.textContent = 'Save';
-    saveTable.disabled = false;
-    backbtn.classList.add('none');
-    savedName.textContent = '';
-    document.title = 'Random Word Search';
-    shown = null;
-    sessionStorage.setItem('shown', JSON.stringify(shown));
+  showModal('newWordsearchModal');
+}, false);
 
-    savedyet ? savedyet = false : allTables.splice(allTables.length - 1, 1);
-    localStorage.setItem('savedyet', savedyet);
-    localStorage.setItem('savedTables', JSON.stringify(allTables));
-    draw(true);
-  }
+document.getElementById('createNewWordSearchBtn').addEventListener('click', () => {
+  createNewTable(document.getElementById('charSetSelect').value);
 }, false);
 
 // open the save table popup
 saveTable.addEventListener('click', () => {
-  savepopup.classList.remove('none');
-  shadow.classList.add('openShadow');
+  showModal(savepopup);
   givename.focus();
   savepop = true;
 }, false);
 
 document.getElementById('infoBtn').addEventListener('click', () => {
-  infoModal.classList.remove('none');
-  shadow.classList.add('openShadow');
+  showModal(infoModal);
 }, false);
 
 // open the list of saved tables, and add links to all of them
@@ -161,8 +159,8 @@ saved.addEventListener('click', () => {
   for (let i = 0; i < allTables.length; i++) {
     allTables[i].number = i + 1;
   }
-  savedpopup.classList.remove('none');
-  shadow.classList.add('openShadow');
+  showModal(savedpopup);
+
   savedTables.innerHTML = '';
 
   for (let i = allTables.length - 1; i >= 0; i--) { // minus so they end up in the right order

@@ -44,6 +44,11 @@ ul, dl {
     line-height: 1.5;
 }
 
+select {
+    font: inherit;
+    padding: 0.5ch;
+}
+
 #infoModal li, #infoModal dd {
     margin-bottom: 1ch;
 }
