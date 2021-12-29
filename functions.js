@@ -16,11 +16,11 @@ function changeName() {
       allTables[shown].name = getName;
     }
     localStorage.setItem('all', JSON.stringify(allTables));
-    saveAlert.classList.add('inlineBlock');
-    shadow.style.display = 'initial';
+    saveAlert.classList.remove('none');
+    shadow.classList.add('openShadow');
     window.setTimeout(() => {
-      saveAlert.classList.remove('inlineBlock');
-      shadow.style.display = '';
+      saveAlert.classList.add('none');
+      shadow.classList.remove('openShadow');
     }, 400);
   }
 }
