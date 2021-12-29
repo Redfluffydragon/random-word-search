@@ -1,7 +1,7 @@
 /** Update UI for viewing a saved table */
 function ifSaved() { //If viewing saved table
   backbtn.classList.remove('none'); //show the back button
-  newtable.classList.add('none'); //hide the new table button
+  newTable.classList.add('none'); //hide the new table button
   document.title = 'RWS - ' + tableName; //change the title
   savedName.value = allTables[shown].name; //put the name of the saved table
   seeName.classList.remove('none'); //show the name
@@ -55,6 +55,7 @@ function resetCopyMenu(e = false) {
     copyMenu.classList.add('none');
     copyBtn.disabled = false;
     copyBackwardsBtn.disabled = false;
+    pickHighlightColorBtn.disabled = false;
   }
 }
 
@@ -223,19 +224,21 @@ function startDrag(e) {
     whichMove = 'touchmove';
   }
 
-  newHighlightColor = `rgba(${randomColor().join()}, 0.5)`;
+  // Only generate a random color if it's not set manually
+  !newHighlightColor && (newHighlightColor = `rgba(${randomColor().join()}, 0.5)`);
 
-  if (allTables[cTable].highlit[cellNum] !== newHighlightColor) {
-    highlighting = true;
-  }
-  if (allTables[cTable].highlit[cellNum]) {
+  highlighting = true; // Highlighting by default
+
+  // Erase only if the cell is already highlighted a different color
+  if (allTables[cTable].highlit[cellNum] && allTables[cTable].highlit[cellNum] !== newHighlightColor) {
     highlighting = false
   }
-  if (!allTables[cTable].highlit[cellNum]) {
+
+  if (highlighting) {
     allTables[cTable].highlit[cellNum] = newHighlightColor;
     cellID[cellNum].style.backgroundColor = newHighlightColor;
   }
-  else if (allTables[cTable].highlit[cellNum]) {
+  else { // Reset the cell if not highlighting
     allTables[cTable].highlit[cellNum] = false;
     cellID[cellNum].style.backgroundColor = 'transparent';
   }
@@ -244,7 +247,7 @@ function startDrag(e) {
 }
 
 /** Do the actual highlighting while dragging */
-function whileDragging(e, type) { //added while dragging, removed when not
+function whileDragging(e) { //added while dragging, removed when not
   if (e.target.closest('td')) {
     e.preventDefault();
     let cellnum;
@@ -271,6 +274,7 @@ function endDrag(e) {
   let whichmove = e.type === 'mouseup' ? 'mousemove' : 'touchmove';
   wordsearch.removeEventListener(whichmove, whileDragging, false);
   localStorage.setItem('savedTables', JSON.stringify(allTables));
+  newHighlightColor = null; // Reset highlight color so it can be set manually
 }
 
 /** Save a new table to localStorage */

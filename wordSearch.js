@@ -1,6 +1,11 @@
 /** todo:
  * adjust width & height automatically? or by user input?
  * get it to work with touch
+ * add default name when saving: "Saved word search #1"?
+ * cTable isn't always correct
+ * be able to keep highlighting the same color if you start in the middle of a word?
+  * Only erase if you start at one of the ends?
+  * Use the context menu? "Highlight this color (next drag only)" option?
  */
 
 // localStorage.clear();
@@ -14,11 +19,9 @@ let cTable; // current table index
 let savepop; // modals open or closed
 let savedpop;
 
-const ldmode = document.getElementById('ldmode');
-
 const wordsearch = document.getElementById('wordsearch');
 const cellID = wordsearch.getElementsByTagName('td');
-const newtable = document.getElementById('newtable');
+const newTable = document.getElementById('newtable');
 const saveTable = document.getElementById('savetable');
 const saved = document.getElementById('saved');
 const deleteAll = document.getElementById('deleteall');
@@ -29,6 +32,7 @@ const savedTables = document.getElementById('savedTables');
 const copyMenu = document.getElementById('copyMenu');
 const copyBtn = document.getElementById('copyBtn');
 const copyBackwardsBtn = document.getElementById('copyBackwardsBtn');
+const pickHighlightColorBtn = document.getElementById('pickHighlightColorBtn');
 
 const savepopup = document.getElementById('savepopup');
 const givename = document.getElementById('givename');
@@ -55,6 +59,7 @@ let lightmode;
 // For clicks on each letter - now with colors!
 let copyCellColor, highlighting, newHighlightColor;
 
+// Get things from storage and add event listeners
 window.addEventListener('load', () => {
   allTables = gotchem('savedTables', []); // all the saved tables
   shown = gotchem('shown', null, sessionStorage); // showing a saved table or not
@@ -65,6 +70,7 @@ window.addEventListener('load', () => {
   switchMode(true);
   draw();
 
+  // Add these event listeners here because the functions are in a separate file
   wordsearch.addEventListener('mousedown', startDrag, false);
   document.addEventListener('mouseup', endDrag, false);
 
@@ -84,6 +90,11 @@ window.addEventListener('load', () => {
   copyBackwardsBtn.addEventListener('click', () => {
     copyWord('backwards');
   }, false);
+
+  pickHighlightColorBtn.addEventListener('click', () => {
+    newHighlightColor = copyCellColor;
+    resetCopyMenu();
+  }, false);
 }, false);
 
 // Open copy menu on right click
@@ -102,15 +113,17 @@ wordsearch.addEventListener('contextmenu', e => {
   if (!copyCellColor) {
     copyBtn.disabled = true;
     copyBackwardsBtn.disabled = true;
+    pickHighlightColorBtn.disabled = true;
   }
 }, false);
 
+// Save tables before page unload
 window.addEventListener('beforeunload', () => {
   localStorage.setItem('savedTables', JSON.stringify(allTables));
 }, false);
 
 // Make a new table
-newtable.addEventListener('click', () => {
+newTable.addEventListener('click', () => {
   let confNew;
   if (!savedyet) {
     confNew = confirm('Make a new table without saving?');
@@ -236,14 +249,14 @@ document.addEventListener('keydown', e => {
   }
 }, false);
 
-//light/dark mode
-ldmode.addEventListener('click', () => {
+// light/dark mode
+document.getElementById('darkModeBtn').addEventListener('click', () => {
   switchMode();
   lightmode = lightmode ? false : true;
   localStorage.setItem('mode', JSON.stringify(lightmode));
 }, false);
 
-//close modals on click outside
+// Close modals on click outside and close copy menu
 document.addEventListener('mousedown', e => {
   resetCopyMenu(e); // Reset the copy menu if you do anything else
   if (e.target.closest('.popup')) {
@@ -254,11 +267,11 @@ document.addEventListener('mousedown', e => {
   }
 }, false);
 
-//go back to main search from saved one
+//go back to main word search from saved one
 backbtn.addEventListener('click', () => {
   changeName(); //in case name was changed
   backbtn.classList.add('none');
-  newtable.classList.remove('none');
+  newTable.classList.remove('none');
   seeName.classList.add('none');
   saveTable.classList.remove('none');
   document.title = 'Random Word Search';
