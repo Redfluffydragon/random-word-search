@@ -25,6 +25,10 @@ body {
     color: var(--color);
 }
 
+img {
+    display: block;
+}
+
 .wordsearch td {
     text-align: center;
     font-size: calc(10px + 1vw);
@@ -54,10 +58,9 @@ body {
     left: -34px;
     list-style-type: none;
     margin: 0;
-}
-
-#bottomLeft button {
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 button {
@@ -76,6 +79,8 @@ button:disabled {
 .imgBtn {
     background: transparent;
     padding: 0;
+    width: 2em;
+    aspect-ratio: 1;
 }
 
 .imgBtn img {
@@ -85,13 +90,9 @@ button:disabled {
 }
 
 #buttons {
-    cursor: default;
-}
-
-#ldmode {
-    cursor: pointer;
-    position: relative;
-    top: 11px;
+    display: flex;
+    place-content: center;
+    gap: 0.5ch;
 }
 
 #shadow {
@@ -136,10 +137,6 @@ ol {
     right: -5vw;
     text-align: left;
     list-style-type: none;
-}
-
-li:hover {
-    cursor: pointer;
 }
 
 .popup button {
