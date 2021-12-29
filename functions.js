@@ -136,7 +136,7 @@ function draw(newTable = false, idx = allTables.length - 1) {
   allTables.forEach((e, i) => {
     e.number = i + 1;
   });
-  drawtable(wordsearch, idx);
+  const cells = drawtable(wordsearch, idx);
 
   if (allTables.length !== 0 && !newTable) {
     let getwidth = width; //attempt to use for different size tables
@@ -150,7 +150,7 @@ function draw(newTable = false, idx = allTables.length - 1) {
     }
   }
   else {
-    fillTable();
+    fillTable(cells);
     idx = allTables.length - 1;
   }
 
@@ -170,7 +170,7 @@ function draw(newTable = false, idx = allTables.length - 1) {
 // Actually display the table on the page
 function drawtable(table, index) {
   wordsearch.innerHTML = '';
-  cells.length = 0;
+  const cells = [];
   for (let i = 0; i < /* alltables[index]. */height; i++) {
     let row = table.insertRow(0);
     for (let j = 0; j < /* alltables[index]. */width; j++) {
@@ -178,22 +178,28 @@ function drawtable(table, index) {
       cells.push(cell);
     }
   }
+  return cells;
 }
 
 /** Fill a table with random letters and push it to allTables */
-function fillTable() {
-  const tweenTable = [];
-  const cellInfo = [];
+function fillTable(cells) {
 
+  // Generate all the random letters for the table and fill the cells
+  let tableLetters = '';
   for (let i = 0; i < width * height; i++) {
-    tweenTable.push(useLetters[Math.floor(Math.random() * useLetters.length)]);
-    cellInfo.push(0);
+    const randomLetter = useLetters[Math.floor(Math.random() * useLetters.length)]
+    tableLetters += randomLetter;
+    cells[i].textContent = randomLetter;
   }
-  const table = tweenTable.join('');
-  for (let i = 0; i < width * height; i++) {
-    cells[i].textContent = table.charAt(i);
-  }
-  allTables.push({ 'name': '', 'number': allTables.length + 1, 'table': table, 'highlit': cellInfo, width: width, height: height });
+
+  allTables.push({
+    name: '',
+    number: allTables.length + 1,
+    table: tableLetters,
+    highlit: Array.from(new Array(width * height), () => 0), // Array full of zeros
+    width: width,
+    height: height,
+  });
   localStorage.setItem('savedTables', JSON.stringify(allTables));
 }
 
@@ -205,9 +211,12 @@ function createNewTable(charSet) {
   if (confNew || savedyet) {
     saveTable.textContent = 'Save';
     saveTable.disabled = false;
+
     backbtn.classList.add('none');
+
     savedName.textContent = '';
     document.title = 'Random Word Search';
+
     shown = null;
     sessionStorage.setItem('shown', JSON.stringify(shown));
 
@@ -321,17 +330,22 @@ function saveTheTable() {
   if (givename.value !== '' && !savedyet) {
     allTables[allTables.length - 1].name = givename.value;
     tableName = givename.value;
+
     sessionStorage.setItem('tableName', JSON.stringify(tableName)); // save which table the user is viewing
+
     shown = allTables.length - 1; //get the number of the table 
     sessionStorage.setItem('shown', JSON.stringify(shown)); //save the number of the table
+
     ifSaved(); //change buttons for saved
     localStorage.setItem('savedTables', JSON.stringify(allTables));
+    
     closeAll();
     savedyet = true;
     localStorage.setItem('savedyet', JSON.stringify(savedyet));
     givename.value = '';
     // draw(); //draw the new table
+
+    saveTable.textContent = 'Saved!';
+    saveTable.disabled = true;
   }
-  saveTable.textContent = 'Saved!';
-  saveTable.disabled = true;
 }

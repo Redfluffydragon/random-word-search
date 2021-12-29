@@ -18,15 +18,10 @@ const charSetMap = {
 }
 let useLetters = LETTERS;
 
-let cells = []; // for cells
 let width = 45; // 45 max width for HP
 let height = 19;
 
 let cTable; // current table index
-
-// modals open or closed
-let savepop;
-let savedpop;
 
 const wordsearch = document.getElementById('wordsearch');
 const cellID = wordsearch.getElementsByTagName('td');
@@ -146,7 +141,6 @@ document.getElementById('createNewWordSearchBtn').addEventListener('click', () =
 saveTable.addEventListener('click', () => {
   showModal(savepopup);
   givename.focus();
-  savepop = true;
 }, false);
 
 document.getElementById('infoBtn').addEventListener('click', () => {
@@ -178,7 +172,6 @@ saved.addEventListener('click', () => {
       cell0.appendChild(showname);
     }
   }
-  savedpop = true;
 }, false);
 
 //clicks on table of saved tables
@@ -246,7 +239,7 @@ document.addEventListener('keydown', e => {
     closeAll();
     resetCopyMenu();
   }
-  else if (e.key === 'Enter' && savepop) {
+  else if (e.key === 'Enter' && !savepopup.classList.contains('none')) {
     saveTheTable();
   }
 }, false);
