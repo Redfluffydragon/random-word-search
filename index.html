@@ -1,48 +1,58 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Random Word Search</title>
-        <link rel="icon" href="rwsicon1.png" type="image/png">
-        <link rel="stylesheet" href="style.css" async>
-        <script src="functions.js" async defer></script>
-        <script src="script.js" async defer></script>
-    </head>
-    <body>
-        <div id="everything">
-        <table id="wordsearch" class="wordsearch"></table>
-        <div id="shadow"></div>
-        <div id="popups">
-            <div id="savedpopup" class="popup">
-                <h3>Saved word searches</h3>
-                <table id="savedTables"></table>
-            </div>
 
-            <div id="savepopup" class="popup">
-                <h3>Save current word search</h3>
-                <label>Name: <input id="givename"></label>
-                <button id="reallysave">Save</button>
-            </div>
-            <div id="saveAlert" class="popup">
-                <h2>Saved!</h2>
-            </div>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Random Word Search</title>
+  <link rel="icon" href="rwsicon1.png" type="image/png">
+  <link rel="stylesheet" href="style.css" async>
+  <script src="functions.js" async></script>
+  <script src="script.js" async defer></script>
+</head>
+
+<body>
+  <div id="everything">
+    <table id="wordsearch" class="wordsearch" contextmenu="copyMenu"></table>
+    <div id="shadow"></div>
+    <div id="popups">
+      <div id="savedpopup" class="popup">
+        <h3>Saved word searches</h3>
+        <table id="savedTables"></table>
+      </div>
+
+      <div id="savepopup" class="popup">
+        <h3>Save current word search</h3>
+        <label>Name: <input id="givename"></label>
+        <button id="reallysave">Save</button>
+      </div>
+      <div id="saveAlert" class="popup">
+        <h2>Saved!</h2>
+      </div>
+    </div>
+
+    <ul id="bottomLeft">
+      <li>
+        <h2 id="seeName" class="none">Saved Search: <input id="savedName"></h2>
+      </li>
+      <li>
+        <div id="buttons">
+          <button id="newtable">New</button>
+          <button id="backbtn" class="none"> &larr; Back</button>
+          <button id="savetable">Save</button>
+          <button id="saved">View Saved</button>
+          <button id="deleteall">Delete all</button>
+          <img src="ldmode.png" id="ldmode" style="width: 35px; height: 35px;">
         </div>
-        
-        <ul id="bottomLeft">
-            <li><h2 id="seeName" class="none">Saved Search: <input id="savedName"></h2></li>
-            <li>
-                <div id="buttons">
-                    <button id="newtable">New</button>
-                    <button id="backbtn" class="none"> &larr; Back</button>
-                    <button id="savetable">Save</button>
-                    <button id="saved">View Saved</button>
-                    <button id="deleteall">Delete all</button>
-                    <img src="ldmode.png" id="ldmode" style="width: 35px; height: 35px;">
-                </div>
-            </li>
-        </ul>
-        </div>
-    </body>
+      </li>
+    </ul>
+  </div>
+
+  <menu id="copyMenu" class="none">
+    <li><button id="copyBtn">Copy</button></li>
+    <li><button id="copyBackwardsBtn">Copy backwards</button></li>
+  </div>
+</body>
+
 </html>

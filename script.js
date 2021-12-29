@@ -5,29 +5,34 @@
 
 // localStorage.clear();
 const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-let cells = [];//for cells
-let width = 45; //45 max width for HP
+let cells = []; // for cells
+let width = 45; // 45 max width for HP
 let height = 19;
 
-let cTable; //current table
+let cTable; // current table index
 
-let savepop; //modals open or closed
+let savepop; // modals open or closed
 let savedpop;
 
 const ldmode = document.getElementById('ldmode');
 
 const wordsearch = document.getElementById('wordsearch');
+const cellID = wordsearch.getElementsByTagName('td');
 const newtable = document.getElementById('newtable');
 const saveTable = document.getElementById('savetable');
 const saved = document.getElementById('saved');
-const deleteall = document.getElementById('deleteall');
+const deleteAll = document.getElementById('deleteall');
 const savedpopup = document.getElementById('savedpopup');
 const popups = document.getElementById('popups');
 const savedTables = document.getElementById('savedTables');
 
+const copyMenu = document.getElementById('copyMenu');
+const copyBtn = document.getElementById('copyBtn');
+const copyBackwardsBtn = document.getElementById('copyBackwardsBtn');
+
 const savepopup = document.getElementById('savepopup');
 const givename = document.getElementById('givename');
-const reallysave = document.getElementById('reallysave');
+const reallySave = document.getElementById('reallysave');
 
 const saveAlert = document.getElementById('saveAlert');
 
@@ -41,24 +46,64 @@ const everything = document.getElementById('everything');
 
 const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
-let allTables = gotchem('savedTables', []); //all the saved tables
-let shown = gotchem('shown', null, sessionStorage); //showing a saved table or not
-let tableName = gotchem('tableName', null, sessionStorage); //table name for shown
-let savedyet = gotchem('savedyet', false); //newest table saved yet or not
-let lightmode = gotchem('mode', true); //light or dark mode
-switchMode(true);
+let allTables;
+let shown;
+let tableName;
+let savedyet;
+let lightmode;
 
-draw();
+// For clicks on each letter - now with colors!
+let copyCellColor, highlighting, newHighlightColor;
 
-//clicks on each letter - now with colors!
-let cellnum, highlighting, newHighlightColor;
-const cellID = wordsearch.getElementsByTagName('td');
+window.addEventListener('load', () => {
+  allTables = gotchem('savedTables', []); // all the saved tables
+  shown = gotchem('shown', null, sessionStorage); // showing a saved table or not
+  tableName = gotchem('tableName', null, sessionStorage); // table name for shown
+  savedyet = gotchem('savedyet', false); // newest table saved yet or not
+  lightmode = gotchem('mode', true); // light or dark mode
 
-wordsearch.addEventListener('mousedown', startDrag, false);
-document.addEventListener('mouseup', endDrag, false);
+  switchMode(true);
+  draw();
 
-wordsearch.addEventListener('touchstart', startDrag, false);
-document.addEventListener('touchend', endDrag, false);
+  wordsearch.addEventListener('mousedown', startDrag, false);
+  document.addEventListener('mouseup', endDrag, false);
+
+  wordsearch.addEventListener('touchstart', startDrag, false);
+  document.addEventListener('touchend', endDrag, false);
+
+  // Actually save the table
+  reallySave.addEventListener('click', saveTheTable, false);
+
+  // Hide the custom copy menu if you do anything else
+  document.addEventListener('touchstart', resetCopyMenu, false);
+
+  copyBtn.addEventListener('click', () => {
+    copyWord('forwards');
+  }, false);
+
+  copyBackwardsBtn.addEventListener('click', () => {
+    copyWord('backwards');
+  }, false);
+}, false);
+
+// Open copy menu on right click
+wordsearch.addEventListener('contextmenu', e => {
+  if (!e.target.matches('td')) { // Only copy if you right click on a cell
+    return;
+  }
+  e.preventDefault();
+
+  copyMenu.classList.remove('none');
+  copyMenu.style.left = e.clientX + 'px';
+  copyMenu.style.top = e.clientY + 'px';
+
+  const cellIdx = e.target.cellIndex + (e.target.closest('tr').rowIndex * width);
+  copyCellColor = allTables[cTable].highlit[cellIdx];
+  if (!copyCellColor) {
+    copyBtn.disabled = true;
+    copyBackwardsBtn.disabled = true;
+  }
+}, false);
 
 window.addEventListener('beforeunload', () => {
   localStorage.setItem('savedTables', JSON.stringify(allTables));
@@ -93,9 +138,6 @@ saveTable.addEventListener('click', () => {
   givename.focus();
   savepop = true;
 }, false);
-
-// Actually save the table
-reallysave.addEventListener('click', saveTheTable, false);
 
 // open the list of saved tables, and add links to all of them
 saved.addEventListener('click', () => {
@@ -169,7 +211,7 @@ savedTables.addEventListener('click', e => {
 }, false);
 
 // Delete all tables
-deleteall.addEventListener('click', () => {
+deleteAll.addEventListener('click', () => {
   let rmvallconf = confirm('Remove all saved word searches?');
   if (rmvallconf) {
     allTables.length = 0;
@@ -185,7 +227,7 @@ deleteall.addEventListener('click', () => {
   }
 }, false);
 
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     closeAll();
   }
@@ -193,7 +235,6 @@ document.addEventListener('keydown', (e) => {
     saveTheTable();
   }
 }, false);
-
 
 //light/dark mode
 ldmode.addEventListener('click', () => {
@@ -203,9 +244,14 @@ ldmode.addEventListener('click', () => {
 }, false);
 
 //close modals on click outside
-document.addEventListener('mousedown', (evt) => {
-  if (evt.target.closest('.popup')) return;
-  if (savepop || savedpop) { closeAll(); }
+document.addEventListener('mousedown', e => {
+  resetCopyMenu(e); // Reset the copy menu if you do anything else
+  if (e.target.closest('.popup')) {
+    return;
+  }
+  if (savepop || savedpop) {
+    closeAll();
+  }
 }, false);
 
 //go back to main search from saved one

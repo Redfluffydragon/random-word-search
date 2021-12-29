@@ -43,7 +43,71 @@ function closeAll() {
   savedpopup.style.display = 'none';
   savepopup.style.display = 'none';
   shadow.style.display = 'none';
+  resetCopyMenu();
 };
+
+/**
+ * Reset the copy menu (hide it and un-disable the buttons)
+ * @param {*} e 
+ */
+function resetCopyMenu(e = false) {
+  if (!e || !e.target.closest('menu')) {
+    copyMenu.classList.add('none');
+    copyBtn.disabled = false;
+    copyBackwardsBtn.disabled = false;
+  }
+}
+
+/**
+ * Find a word by color
+ * @param {'forwards'|'backwards'} direction The direction to find the word in
+ * @returns {string} All the characters that are the color of copyCellColor, in the order specified
+ */
+function findWord(direction = 'forwards') {
+  if (!copyCellColor) {
+    return false;
+  }
+  let word = '';
+  allTables[cTable].highlit.forEach((color, idx) => {
+    if (color === copyCellColor) {
+      word += allTables[cTable].table.charAt(width * height - idx - 1);
+    }
+  });
+  if (direction === 'forwards') {
+    return word[0] + word.slice(1).toLocaleLowerCase();
+  }
+  else if (direction === 'backwards') {
+    const reverseWord = [...word].reverse().join('');
+    return reverseWord[0] + reverseWord.slice(1).toLocaleLowerCase();
+  }
+}
+
+/**
+ * Copy a word by color to the clipboard
+ * @param {'forwards'|'backwards'} direction The direction to copy the word in
+ * @returns {void}
+ */
+function copyWord(direction = 'forwards') {
+  const word = findWord(direction);
+  if (!word) {
+    return;
+  }
+
+  try {
+    navigator.clipboard.writeText(word);
+  }
+  catch (e) {
+    const wordInput = document.createElement('input');
+    wordInput.value = word;
+    wordInput.select();
+    document.body.appendChild(wordInput);
+    document.execCommand('copy');
+    wordInput.remove();
+  }
+  finally {
+    resetCopyMenu();
+  }
+}
 
 /** Switch light/dark mode */
 function switchMode(start = false) {
