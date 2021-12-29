@@ -15,10 +15,11 @@ html {
 }
 
 html.darkMode {
-    --color: var(--almost-white);
+    --color: white;
     --bg: black;
+    --bg: rgb(20, 20, 20);
     --invert: invert(1);
-    --button-bg: var(--almost-black);
+    --button-bg: rgb(60, 60, 60);
     --hover-bg: rgb(50, 50, 50);
     --overlay-bg: var(--almost-black);
 
