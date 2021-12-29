@@ -111,18 +111,9 @@ function copyWord(direction = 'forwards') {
 
 /** Switch light/dark mode */
 function switchMode(start = false) {
-  if (lightmode === start) {
-    document.body.style.backgroundColor = 'white';
-    wordsearch.style.color = 'black';
-    shadow.style.backgroundColor = '';
-    everything.classList.remove('invert');
-  }
-  else if (lightmode !== start) {
-    document.body.style.backgroundColor = 'black';
-    wordsearch.style.color = 'gray';
-    shadow.style.backgroundColor = '#FFFFFF99';
-    everything.classList.add('invert');
-  }
+  lightmode === start ? 
+    document.documentElement.classList.remove('darkMode') :
+    document.documentElement.classList.add('darkMode');
 }
 
 /** Draw a table and reset things */
