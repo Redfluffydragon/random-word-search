@@ -40,10 +40,10 @@ function gotchem(item, defalt, type = localStorage) {
 
 /** Close all modals */
 function closeAll() {
-  savedpopup.style.display = 'none';
-  savepopup.style.display = 'none';
-  shadow.style.display = 'none';
-  resetCopyMenu();
+  savedpopup.classList.add('none');
+  savepopup.classList.add('none');
+  infoModal.classList.add('none');
+  shadow.classList.remove('openShadow');
 };
 
 /**
@@ -247,7 +247,7 @@ function startDrag(e) {
 }
 
 /** Do the actual highlighting while dragging */
-function whileDragging(e) { //added while dragging, removed when not
+function whileDragging(e) { // added while dragging, removed when not
   if (e.target.closest('td')) {
     e.preventDefault();
     let cellnum;

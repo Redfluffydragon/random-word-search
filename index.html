@@ -13,47 +13,78 @@
 </head>
 
 <body>
-  <div id="everything">
-    <table id="wordsearch" class="wordsearch" contextmenu="copyMenu"></table>
-    <div id="shadow"></div>
-    <div id="popups">
-      <div id="savedpopup" class="popup">
-        <h3>Saved word searches</h3>
-        <table id="savedTables"></table>
-      </div>
+  <table id="wordsearch" class="wordsearch" contextmenu="copyMenu"></table>
 
-      <div id="savepopup" class="popup">
-        <h3>Save current word search</h3>
-        <label>Name: <input id="givename"></label>
-        <button id="reallysave">Save</button>
-      </div>
-      <div id="saveAlert" class="popup">
-        <h2>Saved!</h2>
-      </div>
+  <div id="shadow" class="none">
+    <div id="savedpopup" class="popup none">
+      <h3>Saved word searches</h3>
+      <table id="savedTables"></table>
+      <button class="closeBtn">Close</button>
     </div>
 
-    <ul id="bottomLeft">
-      <li>
-        <h2 id="seeName" class="none">Saved Search: <input id="savedName"></h2>
-      </li>
-      <li>
-        <div id="buttons">
-          <button id="newtable">New</button>
-          <button id="backbtn" class="none"> &larr; Back</button>
-          <button id="savetable">Save</button>
-          <button id="saved">View Saved</button>
-          <button id="deleteall">Delete all</button>
-          <button class="imgBtn" id="darkModeBtn" title="Switch light/dark mode">
-            <img src="ldmode.png" width="64" height="64" alt="Light and dark mode icon">
-          </button>
-        </div>
-      </li>
-    </ul>
+    <div id="savepopup" class="popup none">
+      <h3>Save current word search</h3>
+      <div>
+        <label for="givename">Name: <input id="givename"></label>
+        <button id="reallysave" class="defaultBtn">Save</button>
+      </div>
+      <button class="closeBtn">Close</button>
+    </div>
+
+    <div id="saveAlert" class="popup none">
+      <h2>Saved!</h2>
+    </div>
+
+    <div id="infoModal" class="popup none">
+      <h2>About</h2>
+      <p>This is a pseudorandom grid of letters. and you can highlight combinations that you like or find interesting. You could also look for real words, but that's not really the point.</p>
+      <div>
+        <h3>How to use:</h3>
+        <ul>
+          <li>"New word search" generates a new grid of random letters (and asks you if you would like to save the current word search)</li>
+          <li>Use "Save" to save the current word search, with all your highlights.</li>
+          <li>"View saved" lets you switch which word search you're looking at, and delete saved word searches one at a time.</li>
+          <li>"Delete all" will delete all your saved word searches.</li>
+        </ul>
+        <h4>If you right click on a highlighted letter, there are three options:</h4>
+        <dl>
+          <dt>Copy:</dt>
+          <dd>This will copy all letters that are highlighted the color you clicked on, left to right, top to bottom.</dd>
+          <dt>Copy backwards:</dt>
+          <dd>This will copy all letters that are highlighted the color you clicked on, but in reverse order.</dd>
+          <dt>Highlight in this color:</dt>
+          <dd>This will make your next highlight the same color as the one you clicked on. If you make multiple groups of the same color, they will all be copied when you click copy.</dd>
+        </dl>
+      </div>
+      <p>
+        View the source code on
+        <a href="https://github.com/Redfluffydragon/random-word-search/tree/master">GitHub</a>!
+      </p>
+    </div>
   </div>
 
+  <ul id="bottomLeft">
+    <li>
+      <h2 id="seeName" class="none">Saved Search: <input id="savedName"></h2>
+    </li>
+    <li>
+      <div id="buttons">
+        <button id="newtable" class="defaultBtn">New word search</button>
+        <button id="backbtn" class="none"> &larr; Back</button>
+        <button id="savetable" class="blueBtn">Save</button>
+        <button id="saved">View Saved</button>
+        <button id="deleteall" class="warnBtn">Delete all</button>
+        <button class="imgBtn" id="darkModeBtn" title="Switch light/dark mode">
+          <img src="ldmode.png" width="64" height="64" alt="Light and dark mode icon">
+        </button>
+        <button id="infoBtn" class="imgBtn">i</button>
+      </div>
+    </li>
+  </ul>
+
   <menu id="copyMenu" class="none">
-    <li><button id="copyBtn">Copy</button></li>
-    <li><button id="copyBackwardsBtn">Copy backwards</button></li>
+    <li><button id="copyBtn" title="Copies all letters this color, from top left to bottom right.">Copy</button></li>
+    <li><button id="copyBackwardsBtn" title="Same as above, but backwards.">Copy backwards</button></li>
     <li><button id="pickHighlightColorBtn" title="Next highlight only">Highlight in this color</button></li>
   </menu>
 </body>

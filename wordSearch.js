@@ -3,9 +3,6 @@
  * get it to work with touch
  * add default name when saving: "Saved word search #1"?
  * cTable isn't always correct
- * be able to keep highlighting the same color if you start in the middle of a word?
-  * Only erase if you start at one of the ends?
-  * Use the context menu? "Highlight this color (next drag only)" option?
  */
 
 // localStorage.clear();
@@ -16,7 +13,8 @@ let height = 19;
 
 let cTable; // current table index
 
-let savepop; // modals open or closed
+// modals open or closed
+let savepop;
 let savedpop;
 
 const wordsearch = document.getElementById('wordsearch');
@@ -40,13 +38,13 @@ const reallySave = document.getElementById('reallysave');
 
 const saveAlert = document.getElementById('saveAlert');
 
+const infoModal = document.getElementById('infoModal');
+
 const backbtn = document.getElementById('backbtn');
 const savedName = document.getElementById('savedName');
 const seeName = document.getElementById('seeName');
 
 const shadow = document.getElementById('shadow');
-
-const everything = document.getElementById('everything');
 
 const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
@@ -146,10 +144,15 @@ newTable.addEventListener('click', () => {
 
 // open the save table popup
 saveTable.addEventListener('click', () => {
-  savepopup.style.display = 'inline-block';
-  shadow.style.display = 'initial';
+  savepopup.classList.remove('none');
+  shadow.classList.add('openShadow');
   givename.focus();
   savepop = true;
+}, false);
+
+document.getElementById('infoBtn').addEventListener('click', () => {
+  infoModal.classList.remove('none');
+  shadow.classList.add('openShadow');
 }, false);
 
 // open the list of saved tables, and add links to all of them
@@ -158,8 +161,8 @@ saved.addEventListener('click', () => {
   for (let i = 0; i < allTables.length; i++) {
     allTables[i].number = i + 1;
   }
-  savedpopup.style.display = 'inline-block';
-  shadow.style.display = 'initial';
+  savedpopup.classList.remove('none');
+  shadow.classList.add('openShadow');
   savedTables.innerHTML = '';
 
   for (let i = allTables.length - 1; i >= 0; i--) { // minus so they end up in the right order
@@ -243,6 +246,7 @@ deleteAll.addEventListener('click', () => {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     closeAll();
+    resetCopyMenu();
   }
   else if (e.key === 'Enter' && savepop) {
     saveTheTable();
@@ -258,11 +262,10 @@ document.getElementById('darkModeBtn').addEventListener('click', () => {
 
 // Close modals on click outside and close copy menu
 document.addEventListener('mousedown', e => {
-  resetCopyMenu(e); // Reset the copy menu if you do anything else
-  if (e.target.closest('.popup')) {
-    return;
-  }
-  if (savepop || savedpop) {
+  // Reset the copy menu if you do anything else
+  resetCopyMenu(e);
+  // Close modals if you click outside them
+  if (e.target.matches('.closeBtn') || !e.target.closest('.popup')) {
     closeAll();
   }
 }, false);
