@@ -65,14 +65,27 @@
 
     <div id="newWordsearchModal" class="popup none">
       <h2>Make a new word search!</h2>
-      <label for="charSetSelect">
-        Select a character set to use:
-      </label>
+      <label for="charSetSelect">Select a character set to use:</label>
       <select name="" id="charSetSelect">
         <option value="modernEnglish" selected>Modern English (default)</option>
         <option value="minExtended">Slightly extended</option>
         <option value="maxExtended">Very extended</option>
+        <option value="custom">Custom</option>
       </select>
+
+      <form id="customCharSet" class="none">
+        <h3>Include:</h3>
+        <input type="checkbox" name="includeEnglish" id="modernEnglishCheckbox" value="modernEnglish">
+        <label for="modernEnglishCheckbox">ABCDEFGHIJKLMNOPQRSTUVWXYZ</label>
+        <br>
+        <br>
+        <label for="customCharSetInput">Input a custom character set:</label>
+        <br>
+        <textarea name="customCharacters" id="customCharSetInput" cols="40" rows="10"></textarea>
+        <br>
+        <input type="checkbox" name="capitalize" id="capitalizeCheckbox" value="true">
+        <label for="capitalizeCheckbox">Capitalize all characters</label>
+      </form>
       <div>
         <button id="createNewWordSearchBtn" class="defaultBtn">Create</button>
         <button class="closeBtn">Cancel</button>

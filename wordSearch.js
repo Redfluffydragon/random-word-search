@@ -4,6 +4,7 @@
  * add default name when saving: "Saved word search #1"?
  * cTable isn't always correct
  * Add more characters?
+ * clear highlighting button?
  */
 
 // localStorage.clear();
@@ -25,13 +26,16 @@ let cTable; // current table index
 
 const wordsearch = document.getElementById('wordsearch');
 const cellID = wordsearch.getElementsByTagName('td');
-const newTable = document.getElementById('newtable');
 const saveTable = document.getElementById('savetable');
 const saved = document.getElementById('saved');
 const deleteAll = document.getElementById('deleteall');
 const savedpopup = document.getElementById('savedpopup');
 const popups = document.getElementById('popups');
 const savedTables = document.getElementById('savedTables');
+
+const newTable = document.getElementById('newtable');
+const charSetSelect = document.getElementById('charSetSelect');
+const customCharSet = document.getElementById('customCharSet');
 
 const copyMenu = document.getElementById('copyMenu');
 const copyBtn = document.getElementById('copyBtn');
@@ -134,7 +138,18 @@ newTable.addEventListener('click', () => {
 }, false);
 
 document.getElementById('createNewWordSearchBtn').addEventListener('click', () => {
-  createNewTable(document.getElementById('charSetSelect').value);
+  if (charSetSelect.value !== 'custom' || document.getElementById('customCharSetInput').value !== '') {
+    createNewTable(charSetSelect.value);
+  }
+}, false);
+
+charSetSelect.addEventListener('input', () => {
+  if (charSetSelect.value === 'custom') {
+    customCharSet.classList.remove('none');
+  }
+  else {
+    customCharSet.classList.add('none');
+  }
 }, false);
 
 // open the save table popup

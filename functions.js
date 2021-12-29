@@ -119,7 +119,7 @@ function copyWord(direction = 'forwards') {
 
 /** Switch light/dark mode */
 function switchMode(start = false) {
-  lightmode === start ? 
+  lightmode === start ?
     document.documentElement.classList.remove('darkMode') :
     document.documentElement.classList.add('darkMode');
 }
@@ -232,7 +232,23 @@ function createNewTable(charSet) {
     localStorage.setItem('savedTables', JSON.stringify(allTables));
 
     // Set the charset
-    useLetters = charSetMap[charSet];
+    if (charSet === 'custom') {
+      useLetters = '';
+
+      const customCharSetData = new FormData(document.forms.customCharSet);
+      if (customCharSetData.get('includeEnglish') === 'modernEnglish') {
+        useLetters += LETTERS;
+      }
+      let customChars = customCharSetData.get('customCharacters').replace(/\s|\n/g, '');
+
+      if (Boolean(customCharSetData.get('capitalize'))) {
+        customChars = customChars.toLocaleUpperCase();
+      }
+      useLetters += customChars;
+    }
+    else {
+      useLetters = charSetMap[charSet];
+    }
     draw(true);
     closeAll();
   }
@@ -338,7 +354,7 @@ function saveTheTable() {
 
     ifSaved(); //change buttons for saved
     localStorage.setItem('savedTables', JSON.stringify(allTables));
-    
+
     closeAll();
     savedyet = true;
     localStorage.setItem('savedyet', JSON.stringify(savedyet));
