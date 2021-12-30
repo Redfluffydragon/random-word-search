@@ -342,6 +342,14 @@ function detectLongPress(parentEvent) {
 
   pressMoved = false;
   startTime = Date.now();
+  setTimeout(() => {
+    if (endX && endY) {
+      const touchCell = document.elementFromPoint(endX, endY);
+      if (!pressMoved && touchCell.matches('td')) {
+        showCopyMenu(endX, endY, touchCell);
+      }
+    }
+  }, 500);
 }
 
 /** Do the actual highlighting while dragging */
@@ -354,7 +362,7 @@ function whileDragging(e) { // added while dragging, removed when not
     endY = e.touches[0].clientY;
 
     if (!pressMoved) {
-      const TOLERANCE = 25;
+      const TOLERANCE = 15;
       if (Math.abs(startX - endX) > TOLERANCE || Math.abs(startY - endY) > TOLERANCE) {
         pressMoved = true;
         colorCell(startCellIdx);
@@ -391,10 +399,10 @@ function endDrag(e) {
   if (e.type === 'touchend' && endX && endY) { // Only open the copy menu if you end on the table
     const touchCell = document.elementFromPoint(endX, endY);
 
-    if (Date.now() - startTime >= 500 && !pressMoved && touchCell.matches('td')) {
-      showCopyMenu(endX, endY, touchCell);
-    }
-    else if (touchCell.style.backgroundColor !== highlightColor && !pressMoved) {
+    if (copyMenu.classList.contains('none') &&
+      touchCell.style.backgroundColor !== highlightColor &&
+      !pressMoved &&
+      touchCell.matches('td')) {
       colorCell(touchCell.cellIndex + (touchCell.closest('tr').rowIndex * width));
     }
     // Otherwise the copy menu opens all the time on touches outside the table
