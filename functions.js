@@ -385,7 +385,7 @@ function whileDragging(e) { // added while dragging, removed when not
 
 /** Remove event listeners and save the table */
 function endDrag(e) {
-  if (e.type === 'touchend') {
+  if (e.type === 'touchend' && endX && endY) { // Only open the copy menu if you end on the table
     const endTime = Date.now();
     const touchCell = document.elementFromPoint(endX, endY);
 
