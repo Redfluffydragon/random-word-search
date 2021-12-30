@@ -385,15 +385,16 @@ function whileDragging(e) { // added while dragging, removed when not
 /** Remove event listeners and save the table */
 function endDrag(e) {
   if (e.type === 'touchend' && endX && endY) { // Only open the copy menu if you end on the table
-    const endTime = Date.now();
     const touchCell = document.elementFromPoint(endX, endY);
 
-    if (endTime - startTime >= 500 && !pressMoved && touchCell.matches('td')) {
+    if (Date.now() - startTime >= 500 && !pressMoved && touchCell.matches('td')) {
       showCopyMenu(endX, endY, touchCell);
     }
     else if (touchCell.style.backgroundColor !== highlightColor && !pressMoved) {
       colorCell(touchCell.cellIndex + (touchCell.closest('tr').rowIndex * width));
     }
+    endX = null;
+    endY = null;
   }
   else if (e.type === 'mouseup' && e.target.matches('td') && e.button === 0) {
     colorCell(e.target.cellIndex + (e.target.closest('tr').rowIndex * width));
