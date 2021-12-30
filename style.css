@@ -95,7 +95,6 @@ select, input {
   display: flex;
   flex-direction: column;
   gap: 2ch;
-  box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.2);
 }
 
 #controlsList {
@@ -312,6 +311,10 @@ ol {
   .spacer {
     min-height: 15em;
     width: 100%;
+  }
+
+  #footer {
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.2);
   }
 }
 
