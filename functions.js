@@ -395,6 +395,9 @@ function endDrag(e) {
       colorCell(touchCell.cellIndex + (touchCell.closest('tr').rowIndex * width));
     }
   }
+  else if (e.type === 'mouseup' && e.target.matches('td') && e.button === 0) {
+    colorCell(e.target.cellIndex + (e.target.closest('tr').rowIndex * width));
+  }
 
 
   let whichmove = e.type === 'mouseup' ? 'mousemove' : 'touchmove';
