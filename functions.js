@@ -270,8 +270,8 @@ function randomColor() {
 
 function colorCell(idx) {
   if (highlighting) {
-    allTables[cTable].highlit[idx] = newHighlightColor;
-    cellID[idx].style.backgroundColor = newHighlightColor;
+    allTables[cTable].highlit[idx] = highlightColor;
+    cellID[idx].style.backgroundColor = highlightColor;
   }
   else { // Reset the cell if not highlighting
     allTables[cTable].highlit[idx] = false;
@@ -283,13 +283,13 @@ function colorCell(idx) {
 function startDrag(e) {
   e.preventDefault();
   let cellNum; // The index of the starting cell
-  let whichMove; // For adding the right event listener
+
   if (e.type === 'mousedown') {
     if (e.button !== 0 || !e.target.matches('td')) { // Only color on left click, and only if you start on a cell (not on a row)
       return;
     }
     cellNum = e.target.cellIndex + (e.target.closest('tr').rowIndex * width);
-    whichMove = 'mousemove';
+    document.addEventListener('mousemove', whileDragging, false);
   }
   else if (e.type === 'touchstart') {
     const touchCell = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
@@ -298,27 +298,30 @@ function startDrag(e) {
     }
 
     cellNum = touchCell.cellIndex + (touchCell.closest('tr').rowIndex * width);
-    whichMove = 'touchmove';
-    detectLongPress(e, cellNum);
+    document.addEventListener('touchmove', whileDragging, false);
+    detectLongPress(e);
   }
 
   // Only generate a random color if it's not set manually
-  !newHighlightColor && (newHighlightColor = `rgba(${randomColor().join()}, 0.5)`);
+  !highlightColor && (highlightColor = `rgba(${randomColor().join()}, 0.5)`);
 
   highlighting = true; // Highlighting by default
 
   // Erase only if the cell is already highlighted a different color
-  if (allTables[cTable].highlit[cellNum] && allTables[cTable].highlit[cellNum] !== newHighlightColor) {
+  if (allTables[cTable].highlit[cellNum] && allTables[cTable].highlit[cellNum] !== highlightColor) {
     highlighting = false
   }
 
-  document.addEventListener(whichMove, whileDragging, false);
 }
 
 function showCopyMenu(x, y, target) {
   copyMenu.classList.remove('none');
-  copyMenu.style.left = x + 'px';
-  copyMenu.style.top = y + 'px';
+  const boundingRect = copyMenu.getBoundingClientRect();
+
+  const left = Math.min(x, window.innerWidth - boundingRect.width) + window.scrollX;
+  const top = Math.min(y, window.innerHeight - boundingRect.height) + window.scrollY;
+  copyMenu.style.left = left + 'px';
+  copyMenu.style.top = top + 'px';
 
   const cellIdx = target.cellIndex + (target.closest('tr').rowIndex * width);
   copyCellColor = allTables[cTable].highlit[cellIdx];
@@ -329,26 +332,14 @@ function showCopyMenu(x, y, target) {
   }
 }
 
-function detectLongPress(parentEvent, cellNum) {
+function detectLongPress(parentEvent) {
   startX = parentEvent.touches[0].clientX;
   startY = parentEvent.touches[0].clientY;
   endX = startX;
   endY = startY;
 
   pressMoved = false;
-  const startTime = Date.now();
-
-  document.addEventListener('touchend', () => {
-    const endTime = Date.now();
-    const touchCell = document.elementFromPoint(endX, endY);
-
-    if (endTime - startTime >= 500 && !pressMoved && touchCell.matches('td')) {
-      showCopyMenu(endX, endY, touchCell);
-    }
-    else if (touchCell.style.backgroundColor !== newHighlightColor) {
-      colorCell(cellNum);
-    }
-  }, { capture: false, once: true });
+  startTime = Date.now();
 }
 
 /** Do the actual highlighting while dragging */
@@ -386,7 +377,7 @@ function whileDragging(e) { // added while dragging, removed when not
       cellnum = touchcell.cellIndex + (touchcell.closest('tr').rowIndex * width);
     }
 
-    if (allTables[cTable].highlit[cellnum] !== newHighlightColor) {
+    if (allTables[cTable].highlit[cellnum] !== highlightColor) {
       colorCell(cellnum);
     }
   }
@@ -394,10 +385,23 @@ function whileDragging(e) { // added while dragging, removed when not
 
 /** Remove event listeners and save the table */
 function endDrag(e) {
+  if (e.type === 'touchend') {
+    const endTime = Date.now();
+    const touchCell = document.elementFromPoint(endX, endY);
+
+    if (endTime - startTime >= 500 && !pressMoved && touchCell.matches('td')) {
+      showCopyMenu(endX, endY, touchCell);
+    }
+    else if (touchCell.style.backgroundColor !== highlightColor && !pressMoved) {
+      colorCell(touchCell.cellIndex + (touchCell.closest('tr').rowIndex * width));
+    }
+  }
+
+
   let whichmove = e.type === 'mouseup' ? 'mousemove' : 'touchmove';
   document.removeEventListener(whichmove, whileDragging, false);
   localStorage.setItem('savedTables', JSON.stringify(allTables));
-  newHighlightColor = null; // Reset highlight color so it can be set manually
+  highlightColor = null; // Reset highlight color so it can be set manually
 }
 
 /** Save a new table to localStorage */
@@ -418,7 +422,8 @@ function saveTheTable() {
     savedyet = true;
     localStorage.setItem('savedyet', JSON.stringify(savedyet));
     givename.value = '';
-    // draw(); //draw the new table
+    // !Is this why cTable isn't correct when saving a table?
+    // draw(); //draw the new table 
 
     saveTable.textContent = 'Saved!';
     saveTable.disabled = true;

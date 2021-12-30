@@ -1,11 +1,10 @@
 /** todo:
  * adjust width & height automatically? or by user input?
- * get it to work with touch
  * add default name when saving: "Saved word search #1"?
- * cTable isn't always correct
- * Add more characters?
+ * cTable isn't always correct - when making a new table I think
  * clear highlighting button?
  * don't ask to save if they haven't higlighted anything
+ * save custom charsets?
  */
 
 'use strict';
@@ -70,12 +69,14 @@ let lightmode; // Light/dark mode
 // For clicks on each letter - now with colors!
 let copyCellColor; // For copying cells by color and highlighting in a chosen color
 let highlighting; // Highlighting or erasing
-let newHighlightColor; // The color for highlighting
+let highlightColor; // The color for highlighting
 
+// For long presses
 let startX;
 let startY;
 let endX;
 let endY;
+let startTime
 let pressMoved;
 
 // Get things from storage and add event listeners
@@ -111,7 +112,7 @@ window.addEventListener('load', () => {
   }, false);
 
   pickHighlightColorBtn.addEventListener('click', () => {
-    newHighlightColor = copyCellColor;
+    highlightColor = copyCellColor;
     resetCopyMenu();
   }, false);
 }, false);

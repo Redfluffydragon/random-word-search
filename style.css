@@ -252,6 +252,7 @@ ol {
   background: var(--overlay-bg);
   padding: 0;
   box-shadow: 5px 7px 15px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
 }
 
 #copyMenu li {
