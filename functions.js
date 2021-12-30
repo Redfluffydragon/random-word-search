@@ -302,16 +302,15 @@ function startDrag(e) {
     detectLongPress(e);
   }
 
-  // Only generate a random color if it's not set manually
-  !highlightColor && (highlightColor = `rgba(${randomColor().join()}, 0.5)`);
-
   highlighting = true; // Highlighting by default
 
   // Erase only if the cell is already highlighted a different color
-  if (allTables[cTable].highlit[cellNum] && allTables[cTable].highlit[cellNum] !== highlightColor) {
+  if (allTables[cTable].highlit[cellNum] && !highlightColor && allTables[cTable].highlit[cellNum] !== highlightColor) {
     highlighting = false
   }
 
+  // Only generate a random color if it's not set manually
+  !highlightColor && (highlightColor = `rgba(${randomColor().join()}, 0.5)`);
 }
 
 function showCopyMenu(x, y, target) {
