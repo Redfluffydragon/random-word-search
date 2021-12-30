@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1">
   <title>Random Word Search</title>
   <link rel="icon" href="rwsicon1.png" type="image/png">
   <link rel="stylesheet" href="style.css" async>
@@ -14,6 +13,7 @@
 
 <body>
   <table id="wordsearch" class="wordsearch" contextmenu="copyMenu"></table>
+  <div class="spacer"></div>
 
   <div id="shadow" class="none">
     <div id="savedpopup" class="popup none">
@@ -93,24 +93,28 @@
     </div>
   </div>
 
-  <ul id="bottomLeft">
-    <li>
-      <h2 id="seeName" class="none">Saved Search: <input id="savedName"></h2>
-    </li>
-    <li>
-      <div id="buttons">
-        <button id="newtable" class="defaultBtn">New word search</button>
-        <button id="backbtn" class="none"> &larr; Back</button>
-        <button id="savetable" class="blueBtn">Save</button>
-        <button id="saved">View Saved</button>
-        <button id="deleteall" class="warnBtn">Delete all</button>
-        <button class="imgBtn" id="darkModeBtn" title="Switch light/dark mode">
-          <img src="ldmode.png" width="64" height="64" alt="Light and dark mode icon">
-        </button>
-        <button id="infoBtn" class="imgBtn">i</button>
-      </div>
-    </li>
-  </ul>
+  <footer id="footer">
+    <ul id="controlsList">
+      <li>
+        <h2 id="seeName" class="none">Saved Search: <input id="savedName"></h2>
+      </li>
+      <li>
+        <div id="buttons" class="flexCenter">
+          <button id="newtable" class="defaultBtn">New word search</button>
+          <button id="backbtn" class="none"> &larr; Back</button>
+          <button id="savetable" class="blueBtn">Save</button>
+          <button id="saved">View Saved</button>
+          <button id="deleteall" class="warnBtn">Delete all</button>
+          <div class="flexCenter halfChGap">
+            <button class="imgBtn" id="darkModeBtn" title="Switch light/dark mode">
+              <img src="ldmode.png" width="64" height="64" alt="Light and dark mode icon">
+            </button>
+            <button id="infoBtn" class="imgBtn">i</button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </footer>
 
   <menu id="copyMenu" class="none">
     <li><button id="copyBtn" title="Copies all letters this color, from top left to bottom right.">Copy</button></li>
