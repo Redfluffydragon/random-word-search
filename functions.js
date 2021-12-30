@@ -268,6 +268,17 @@ function randomColor() {
   return newColor;
 }
 
+function colorCell(idx) {
+  if (highlighting) {
+    allTables[cTable].highlit[idx] = newHighlightColor;
+    cellID[idx].style.backgroundColor = newHighlightColor;
+  }
+  else { // Reset the cell if not highlighting
+    allTables[cTable].highlit[idx] = false;
+    cellID[idx].style.backgroundColor = 'transparent';
+  }
+}
+
 /** Set up for dragging (Highlighting or not, pick a color, add event listeners) */
 function startDrag(e) {
   e.preventDefault();
@@ -288,6 +299,7 @@ function startDrag(e) {
 
     cellNum = touchCell.cellIndex + (touchCell.closest('tr').rowIndex * width);
     whichMove = 'touchmove';
+    detectLongPress(e, cellNum);
   }
 
   // Only generate a random color if it's not set manually
@@ -300,22 +312,73 @@ function startDrag(e) {
     highlighting = false
   }
 
-  if (highlighting) {
-    allTables[cTable].highlit[cellNum] = newHighlightColor;
-    cellID[cellNum].style.backgroundColor = newHighlightColor;
-  }
-  else { // Reset the cell if not highlighting
-    allTables[cTable].highlit[cellNum] = false;
-    cellID[cellNum].style.backgroundColor = 'transparent';
-  }
+  document.addEventListener(whichMove, whileDragging, false);
+}
 
-  wordsearch.addEventListener(whichMove, whileDragging, false);
+function showCopyMenu(x, y, target) {
+  copyMenu.classList.remove('none');
+  copyMenu.style.left = x + 'px';
+  copyMenu.style.top = y + 'px';
+
+  const cellIdx = target.cellIndex + (target.closest('tr').rowIndex * width);
+  copyCellColor = allTables[cTable].highlit[cellIdx];
+  if (!copyCellColor) {
+    copyBtn.disabled = true;
+    copyBackwardsBtn.disabled = true;
+    pickHighlightColorBtn.disabled = true;
+  }
+}
+
+function detectLongPress(parentEvent, cellNum) {
+  startX = parentEvent.touches[0].clientX;
+  startY = parentEvent.touches[0].clientY;
+  endX = startX;
+  endY = startY;
+
+  pressMoved = false;
+  const startTime = Date.now();
+
+  document.addEventListener('touchend', () => {
+    const endTime = Date.now();
+    const touchCell = document.elementFromPoint(endX, endY);
+
+    console.log(touchCell);
+
+    if (endTime - startTime >= 500 && !pressMoved && touchCell.matches('td')) {
+      showCopyMenu(endX, endY, touchCell);
+    }
+    else if (touchCell.style.backgroundColor !== newHighlightColor) {
+      colorCell(cellNum);
+    }
+  }, { capture: false, once: true });
 }
 
 /** Do the actual highlighting while dragging */
 function whileDragging(e) { // added while dragging, removed when not
+
+  if (e.type === 'touchmove') {
+
+    // Get touch coordinates for long press detection, and check if the touch has moved
+    endX = e.touches[0].clientX;
+    endY = e.touches[0].clientY;
+
+    if (!pressMoved) {
+      const TOLERANCE = 25;
+      if (Math.abs(startX - endX) > TOLERANCE || Math.abs(startY - endY) > TOLERANCE) {
+        pressMoved = true;
+      }
+      else {
+        return; // Don't highlight until it's not a long press
+      }
+    }
+
+    // Don't do anything if it's not on a cell
+    const touchCell = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+    if (!touchCell.matches('td')) {
+      return;
+    }
+  }
   if (e.target.closest('td')) {
-    e.preventDefault();
     let cellnum;
     if (e.type === 'mousemove') {
       cellnum = e.target.cellIndex + (e.target.closest('tr').rowIndex * width);
@@ -324,13 +387,9 @@ function whileDragging(e) { // added while dragging, removed when not
       let touchcell = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY)
       cellnum = touchcell.cellIndex + (touchcell.closest('tr').rowIndex * width);
     }
-    if (allTables[cTable].highlit[cellnum] !== newHighlightColor && highlighting) {
-      allTables[cTable].highlit[cellnum] = newHighlightColor;
-      cellID[cellnum].style.backgroundColor = newHighlightColor;
-    }
-    else if (allTables[cTable].highlit[cellnum] !== newHighlightColor && !highlighting) {
-      allTables[cTable].highlit[cellnum] = false;
-      cellID[cellnum].style.backgroundColor = 'transparent';
+
+    if (allTables[cTable].highlit[cellnum] !== newHighlightColor) {
+      colorCell(cellnum);
     }
   }
 }
@@ -338,7 +397,7 @@ function whileDragging(e) { // added while dragging, removed when not
 /** Remove event listeners and save the table */
 function endDrag(e) {
   let whichmove = e.type === 'mouseup' ? 'mousemove' : 'touchmove';
-  wordsearch.removeEventListener(whichmove, whileDragging, false);
+  document.removeEventListener(whichmove, whileDragging, false);
   localStorage.setItem('savedTables', JSON.stringify(allTables));
   newHighlightColor = null; // Reset highlight color so it can be set manually
 }

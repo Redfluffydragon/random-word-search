@@ -61,16 +61,22 @@ const shadow = document.getElementById('shadow');
 
 const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
-let allTables;
-let shown;
-let tableName;
-let savedyet;
-let lightmode;
+let allTables; // All the saved tables
+let shown; // Index of the currently displayed table
+let tableName; // 
+let savedyet; // Whether the newest table is saved yet or not
+let lightmode; // Light/dark mode
 
 // For clicks on each letter - now with colors!
 let copyCellColor; // For copying cells by color and highlighting in a chosen color
 let highlighting; // Highlighting or erasing
 let newHighlightColor; // The color for highlighting
+
+let startX;
+let startY;
+let endX;
+let endY;
+let pressMoved;
 
 // Get things from storage and add event listeners
 window.addEventListener('load', () => {
@@ -116,18 +122,7 @@ wordsearch.addEventListener('contextmenu', e => {
     return;
   }
   e.preventDefault();
-
-  copyMenu.classList.remove('none');
-  copyMenu.style.left = e.clientX + 'px';
-  copyMenu.style.top = e.clientY + 'px';
-
-  const cellIdx = e.target.cellIndex + (e.target.closest('tr').rowIndex * width);
-  copyCellColor = allTables[cTable].highlit[cellIdx];
-  if (!copyCellColor) {
-    copyBtn.disabled = true;
-    copyBackwardsBtn.disabled = true;
-    pickHighlightColorBtn.disabled = true;
-  }
+  showCopyMenu(e.clientX, e.clientY, e.target);
 }, false);
 
 // Save tables before page unload
