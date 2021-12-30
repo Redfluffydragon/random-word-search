@@ -93,12 +93,14 @@ select, input {
   background: var(--bg);
   padding: 2ch 1ch 1ch;
   display: flex;
-  flex-direction: column;
-  gap: 2ch;
+  place-content: center;
 }
 
 #controlsList {
   list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2ch;
   padding: 0;
   margin: 0;
 }
