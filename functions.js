@@ -342,8 +342,6 @@ function detectLongPress(parentEvent, cellNum) {
     const endTime = Date.now();
     const touchCell = document.elementFromPoint(endX, endY);
 
-    console.log(touchCell);
-
     if (endTime - startTime >= 500 && !pressMoved && touchCell.matches('td')) {
       showCopyMenu(endX, endY, touchCell);
     }
