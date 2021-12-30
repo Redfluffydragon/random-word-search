@@ -5,7 +5,10 @@
  * cTable isn't always correct
  * Add more characters?
  * clear highlighting button?
+ * don't ask to save if they haven't higlighted anything
  */
+
+'use strict';
 
 // localStorage.clear();
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

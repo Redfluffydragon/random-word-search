@@ -1,3 +1,5 @@
+'use strict';
+
 /** Update UI for viewing a saved table */
 function ifSaved() { //If viewing saved table
   backbtn.classList.remove('none'); //show the back button
