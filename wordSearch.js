@@ -5,6 +5,8 @@
  * clear highlighting button?
  * don't ask to save if they haven't higlighted anything
  * save custom charsets?
+ * highlight starting cell on touchmove (if they actually move)
+  * right now if you start too close to the edge, by the time you exceed the perimeter, you're off the cell you started on and it doesn't get highlit
  */
 
 'use strict';
@@ -76,8 +78,9 @@ let startX;
 let startY;
 let endX;
 let endY;
-let startTime
+let startTime;
 let pressMoved;
+let startCellIdx;
 
 // Get things from storage and add event listeners
 window.addEventListener('load', () => {

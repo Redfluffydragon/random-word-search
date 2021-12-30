@@ -269,6 +269,8 @@ function randomColor() {
 }
 
 function colorCell(idx) {
+  if (!idx) return;
+
   if (highlighting) {
     allTables[cTable].highlit[idx] = highlightColor;
     cellID[idx].style.backgroundColor = highlightColor;
@@ -298,6 +300,7 @@ function startDrag(e) {
     }
 
     cellNum = touchCell.cellIndex + (touchCell.closest('tr').rowIndex * width);
+    startCellIdx = cellNum;
     document.addEventListener('touchmove', whileDragging, false);
     detectLongPress(e);
   }
@@ -354,6 +357,7 @@ function whileDragging(e) { // added while dragging, removed when not
       const TOLERANCE = 25;
       if (Math.abs(startX - endX) > TOLERANCE || Math.abs(startY - endY) > TOLERANCE) {
         pressMoved = true;
+        colorCell(startCellIdx);
       }
       else {
         return; // Don't highlight until it's not a long press
@@ -367,17 +371,17 @@ function whileDragging(e) { // added while dragging, removed when not
     }
   }
   if (e.target.closest('td')) {
-    let cellnum;
+    let cellNum;
     if (e.type === 'mousemove') {
-      cellnum = e.target.cellIndex + (e.target.closest('tr').rowIndex * width);
+      cellNum = e.target.cellIndex + (e.target.closest('tr').rowIndex * width);
     }
     else if (e.type === 'touchmove') {
-      let touchcell = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY)
-      cellnum = touchcell.cellIndex + (touchcell.closest('tr').rowIndex * width);
+      const touchCell = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY)
+      cellNum = touchCell.cellIndex + (touchCell.closest('tr').rowIndex * width);
     }
 
-    if (allTables[cTable].highlit[cellnum] !== highlightColor) {
-      colorCell(cellnum);
+    if (allTables[cTable].highlit[cellNum] !== highlightColor) {
+      colorCell(cellNum);
     }
   }
 }
@@ -393,8 +397,10 @@ function endDrag(e) {
     else if (touchCell.style.backgroundColor !== highlightColor && !pressMoved) {
       colorCell(touchCell.cellIndex + (touchCell.closest('tr').rowIndex * width));
     }
+    // Otherwise the copy menu opens all the time on touches outside the table
     endX = null;
     endY = null;
+    startCellIdx = null;
   }
   else if (e.type === 'mouseup' && e.target.matches('td') && e.button === 0) {
     colorCell(e.target.cellIndex + (e.target.closest('tr').rowIndex * width));
